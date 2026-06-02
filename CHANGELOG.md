@@ -9,6 +9,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 - [PR#57](https://github.com/nf-core/lsmquant/pull/57) - Fix input declaration of the model file for the module: `numorph3dunet` to be reused for all inputs.
 - remove conda batch from readme, the pipeline does not support conda.
+- set matlab cache directory in numorph_stitch to fix concurrency issues when running multiple samples.
 
 ## v1.0.0 - Excited Squid
 
