@@ -134,14 +134,14 @@ workflow LSMQUANT {
 
     stitched_data = ch_samplesheet
             .join (stitched_output)
-            .map { meta, img_dir, parameter_file, stitched_data ->
+            .map { meta, img_directory, parameter_file, stitched_data ->
                 [meta, stitched_data, parameter_file]
             }
 
     // run nuclei quantification
     if (params.nuclei_quantification) {
 
-        def model_file = Channel.fromPath(params.model_file, checkIfExists: !params.model_file.startsWith('http'))
+        model_file = file(params.model_file, checkIfExists: !params.model_file.startsWith('http'))
         NUMORPH3DUNET (stitched_data, model_file)
 
     }

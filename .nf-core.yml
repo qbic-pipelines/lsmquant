@@ -1,11 +1,10 @@
-nf_core_version: 3.5.1
+nf_core_version: 3.5.2
 repository_type: pipeline
 lint:
-  included_configs: False
+  included_configs: false
 template:
   author: Carolin Schwitalla
-  description: A pipeline for preprocessing and analysis of large-scale light-sheet
-    microscopy images based on the NuMorph toolbox
+  description: A pipeline for preprocessing and analysis of large-scale light-sheet microscopy images based on the NuMorph toolbox
   force: false
   is_nfcore: true
   name: lsmquant
@@ -14,4 +13,4 @@ template:
   skip_features:
     - fastqc
     - igenomes
-  version: 1.0.0
+  version: 1.0.1

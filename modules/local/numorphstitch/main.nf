@@ -23,6 +23,8 @@ process NUMORPHSTITCH {
     def NM_var = NM_variable ? NM_variable : ''
     def variables_input = variables ? variables : ''
     """
+    export MCR_CACHE_ROOT=\${PWD}/.mcrCache
+
     # create output directories needed by the tool
     mkdir -p ./results/stitched/
 

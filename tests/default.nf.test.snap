@@ -25,7 +25,7 @@
                     "numorph_param_validation": "1.0.0"
                 },
                 "Workflow": {
-                    "nf-core/lsmquant": "v1.0.0"
+                    "nf-core/lsmquant": "v1.0.1"
                 }
             },
             [
@@ -79,7 +79,7 @@
                 "params_TEST1_lsmquant.csv:md5,a1edc3a22e8f390e473102d0193a8f1c"
             ]
         ],
-        "timestamp": "2026-03-20T13:18:41.89714723",
+        "timestamp": "2026-04-29T15:18:49.500188714",
         "meta": {
             "nf-test": "0.9.4",
             "nextflow": "25.10.3"
@@ -111,7 +111,7 @@
                     "numorph_param_validation": "1.0.0"
                 },
                 "Workflow": {
-                    "nf-core/lsmquant": "v1.0.0"
+                    "nf-core/lsmquant": "v1.0.1"
                 }
             },
             [
@@ -579,7 +579,7 @@
                 "params_TEST1_lsmquant.csv:md5,a1edc3a22e8f390e473102d0193a8f1c"
             ]
         ],
-        "timestamp": "2026-03-20T13:17:57.078651506",
+        "timestamp": "2026-04-29T15:16:32.417361365",
         "meta": {
             "nf-test": "0.9.4",
             "nextflow": "25.10.3"
