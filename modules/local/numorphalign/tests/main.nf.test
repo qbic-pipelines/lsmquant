@@ -1,0 +1,117 @@
+nextflow_process {
+    name "Test Process Numorphalign"
+    script "../main.nf"
+    process "NUMORPHALIGN"
+
+    test("numorph align test") {
+        setup {
+            run ("UNZIP") {
+                script "../../../nf-core/unzip/main.nf"
+                process {
+                    """
+                    input[0] = [
+                        [ id:'TEST1'],
+                        file('https://zenodo.org/records/14916478/files/ctip2_topro.zip')
+                    ]
+                """
+                }
+            }
+            run ("NUMORPH_INTENSITY") {
+                script "../../../nf-core/numorph/intensity/main.nf"
+                process {
+                    """
+                    input[0] = UNZIP.out.unzipped_archive.map { meta, unzipped_archive ->
+                        tuple(
+                        meta,
+                        unzipped_archive,
+                        file(params.pipelines_testdata_base_path + '/test_data/parameterfiles/params_TEST1_lsmquant.csv'))
+                    }
+                    """
+                }
+            }
+        }
+        when {
+            params {
+                outdir = "$outputDir"
+            }
+            process {
+                """
+                input[0] = UNZIP.out.unzipped_archive
+                    .combine(NUMORPH_INTENSITY.out.variables)
+                    .combine(NUMORPH_INTENSITY.out.NM_variable)
+                    .map { meta, unzipped_archive, meta2, variables, meta3, NM_variable ->
+                        [
+                            meta,
+                            unzipped_archive,
+                            file(params.pipelines_testdata_base_path + '/test_data/parameterfiles/params_TEST1_lsmquant.csv'),
+                            variables,
+                            NM_variable
+                        ]
+                    }
+                """
+            }
+        }
+        then {
+
+            // Get the directory paths
+            def variablesDir = process.out.variables_alignment.get(0).get(1)
+            def samplesDir = process.out.samples_alignment.get(0).get(1)
+
+            // Use getAllFilesFromDir to get relative file paths
+            def variablesFiles = getAllFilesFromDir(variablesDir, relative: true, includeDir: false)
+            def samplesFiles = getAllFilesFromDir(samplesDir, relative: true, includeDir: false)
+            assertAll (
+                { assert process.success },             // Check process completed successfully
+                { assert file(process.out.NM_variable.get(0).get(1)).exists() : "NM_variables.mat file does not exist" },
+                { assert variablesFiles.size() == 5 },
+                { assert samplesFiles.size() == 2 },
+                { assert snapshot(
+                    variablesFiles,
+                    samplesFiles,
+                    process.out.versions
+                ).match()}
+            )
+        }
+    }
+
+    test("numorph align stub test") {
+        options '-stub'
+        setup {
+            run ("NUMORPH_INTENSITY") {
+                script "../../../nf-core/numorph/intensity/main.nf"
+                options '-stub'
+                process {
+                    """
+                    input[0] = Channel.fromList([
+                        tuple([ id:'TEST1'],
+                        file('https://zenodo.org/records/14916478/files/ctip2_topro.zip'),
+                        file(params.pipelines_testdata_base_path + '/test_data/parameterfiles/params_TEST1_lsmquant.csv'))
+                        ])
+                    """
+                }
+            }
+        }
+
+        when {
+            process {
+                """
+                input[0] = (NUMORPH_INTENSITY.out.variables)
+                    .combine(NUMORPH_INTENSITY.out.NM_variable)
+                    .map { meta2, variables, meta3, NM_variable ->
+                        [
+                            meta2,
+                            file('https://zenodo.org/records/14916478/files/ctip2_topro.zip'),
+                            file(params.pipelines_testdata_base_path + '/test_data/parameterfiles/params_TEST1_lsmquant.csv'),
+                            variables,
+                            NM_variable
+                        ]
+                    }
+                """
+            }
+        }
+        then {
+            assert process.success              // Check process completed successfully
+            assert snapshot(process.out).match() // Validate outputs match expected snapshot
+        }
+    }
+}

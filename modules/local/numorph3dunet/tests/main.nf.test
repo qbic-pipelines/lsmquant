@@ -1,0 +1,90 @@
+nextflow_process {
+
+    name "Test Process NUMORPH3DUNET"
+    script "../main.nf"
+    process "NUMORPH3DUNET"
+
+    tag "modules"
+    tag "modules_"
+    tag "numorph3dunet"
+    tag "gpu"
+    profile "gpu"
+
+    config './nextflow.config'
+
+    test("numorph-3DUnet test - tif") {
+
+        setup {
+            run ("UNZIP") {
+                script "../../../nf-core/unzip/main.nf"
+                process {
+                    """
+                    input[0] = Channel.fromList([
+                        tuple([ id:'TEST1'],
+                        file(params.pipelines_testdata_base_path + '/test_data/unet_test_images.zip'))
+                    ])
+                """
+                }
+            }
+        }
+
+        when {
+            params {
+                outdir = "$outputDir"
+            }
+            process {
+                """
+                input[0] = UNZIP.out.unzipped_archive.map { meta, unzipped_archive ->
+                    def image_dir = file(unzipped_archive).listFiles().find { it.isDirectory() }
+                    tuple(
+                        meta,
+                        image_dir ?: unzipped_archive, // if no directory found use unzipped archive path (in case of zip containing files directly)
+                        file(params.pipelines_testdata_base_path + '/test_data/parameterfiles/params_TEST1_lsmquant.csv'))
+                }
+                input[1] = Channel.fromPath(params.model_file, checkIfExists: !params.model_file.startsWith('http'))
+                """
+            }
+        }
+
+        then {
+            def cellcounDir = process.out.cellcounts.get(0).get(1)
+            def cellcountFiles = getAllFilesFromDir(cellcounDir, relative: true, includeDir: false)
+            assertAll(
+                {assert process.success },
+                {assert cellcountFiles.size() == 2 },
+                { assert snapshot(
+                    cellcountFiles,
+                    process.out.versions
+                ).match() }
+            )
+        }
+
+    }
+
+    test("numorph-3DUnet stub test - tif") {
+
+        options '-stub'
+
+        when {
+            process {
+                """
+                input[0] = Channel.fromList([
+                    tuple([ id:'TEST1'], // meta map
+                    file('https://zenodo.org/records/14916478/files/ctip2_topro.zip'),
+                    file(params.pipelines_testdata_base_path + '/test_data/parameterfiles/params_TEST1_lsmquant.csv'))
+                    ])
+                input[1] = Channel.fromPath(params.model_file, checkIfExists: !params.model_file.startsWith('http'))
+                """
+            }
+        }
+
+        then {
+            assertAll(
+                { assert process.success },
+                { assert snapshot(process.out).match() }
+            )
+        }
+
+    }
+
+}

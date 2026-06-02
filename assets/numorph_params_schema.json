@@ -1,0 +1,525 @@
+{
+    "$schema": "http://json-schema.org/draft-07/schema#",
+    "title": "NuMorph Parameter Schema",
+    "description": "Validation schema for NuMorph pipeline parameter files",
+    "type": "object",
+    "additionalProperties": false,
+
+    "definitions": {
+        "semicolon_list_of_numbers": {
+            "type": "string",
+            "pattern": "^-?\\d+(\\.\\d+)?(;-?\\d+(\\.\\d+)?)*$",
+            "description": "Semicolon-separated list of numbers, e.g. '3;3;1' or '1.21;1.21;4'"
+        },
+        "semicolon_list_of_strings": {
+            "type": "string",
+            "pattern": "^[^;]+(;[^;]+)*$",
+            "description": "Semicolon-separated list of strings, e.g. 'C01;C00' or 'topro;ctip2'"
+        },
+        "nullable_string": {
+            "oneOf": [{ "type": "string" }, { "type": "null" }]
+        },
+        "nullable_number": {
+            "oneOf": [{ "type": "number" }, { "type": "null" }]
+        },
+        "nullable_integer": {
+            "oneOf": [{ "type": "integer" }, { "type": "null" }]
+        },
+        "nullable_boolean": {
+            "oneOf": [{ "type": "boolean" }, { "type": "null" }]
+        }
+    },
+
+    "properties": {
+        "group": {
+            "description": "Semicolon-separated list of experimental group names, e.g. 'TEST;WT;R1'",
+            "oneOf": [{ "$ref": "#/definitions/semicolon_list_of_strings" }, { "type": "null" }]
+        },
+        "channel_num": {
+            "description": "Semicolon-separated channel identifiers, e.g. 'C01;C00'",
+            "oneOf": [{ "$ref": "#/definitions/semicolon_list_of_strings" }, { "type": "null" }]
+        },
+        "markers": {
+            "description": "Semicolon-separated marker names corresponding to each channel",
+            "oneOf": [{ "$ref": "#/definitions/semicolon_list_of_strings" }, { "type": "null" }]
+        },
+        "position_exp": {
+            "description": "Regular expression pattern used to parse tile positions from filenames",
+            "oneOf": [{ "type": "string" }, { "type": "null" }]
+        },
+        "resolution": {
+            "description": "Physical pixel resolution as semicolon-separated values (x;y;z) in microns",
+            "oneOf": [{ "$ref": "#/definitions/semicolon_list_of_numbers" }, { "type": "null" }]
+        },
+        "orientation": {
+            "description": "3-letter anatomical orientation code, Orientation key: anterior(a)/posterior(p), superior(s)/inferior(i), left(l)/right(r)",
+            "oneOf": [
+                {
+                    "type": "string",
+                    "pattern": "^[apisrl]{3}$"
+                },
+                { "type": "null" }
+            ]
+        },
+        "hemisphere": {
+            "description": "Which brain hemisphere(s) to process",
+            "oneOf": [
+                {
+                    "type": "string",
+                    "enum": ["both", "left", "right", "none"]
+                },
+                { "type": "null" }
+            ]
+        },
+        "use_processed_images": {
+            "description": "Whether to use pre-processed images as input",
+            "oneOf": [{ "type": "string" }, { "type": "boolean" }, { "type": "null" }]
+        },
+        "ignore_markers": {
+            "description": "Marker(s) to ignore during processing, or 'Auto'",
+            "oneOf": [{ "type": "string" }, { "type": "null" }]
+        },
+        "save_images": {
+            "description": "Whether to save output images to disk",
+            "$ref": "#/definitions/nullable_boolean"
+        },
+        "save_samples": {
+            "description": "Whether to save sample/preview images",
+            "$ref": "#/definitions/nullable_boolean"
+        },
+        "adjust_intensity": {
+            "description": "Whether to adjust channel intensities",
+            "oneOf": [{ "type": "string", "pattern": "update" }, { "type": "null" }, { "type": "boolean" }]
+        },
+        "darkfield_intensity": {
+            "description": "Intensity threshold for darkfield correction",
+            "oneOf": [{ "type": "integer", "minimum": 0 }, { "type": "null" }]
+        },
+        "adjust_tile_shading": {
+            "description": "Shading adjustment method for tiles",
+            "oneOf": [
+                {
+                    "type": "string",
+                    "enum": ["basic", "manual"]
+                },
+                { "type": "boolean" },
+                { "type": "null" }
+            ]
+        },
+        "adjust_tile_position": {
+            "description": "Whether to adjust tile positions before stitching",
+            "$ref": "#/definitions/nullable_boolean"
+        },
+        "update_intensity_channels": {
+            "description": "Which channels to update intensity for (semicolon-separated or null)",
+            "oneOf": [{ "$ref": "#/definitions/semicolon_list_of_numbers" }, { "type": "null" }]
+        },
+        "single_sheet": {
+            "description": "Whether to process as a single sheet",
+            "$ref": "#/definitions/nullable_boolean"
+        },
+        "ls_width": {
+            "description": "Light sheet width in pixels",
+            "oneOf": [{ "type": "integer", "minimum": 0 }, { "type": "null" }]
+        },
+        "laser_y_displacement": {
+            "description": "Laser Y-axis displacement offset",
+            "oneOf": [{ "type": "number", "minimum": -0.5, "maximum": 0.5 }, { "type": "null" }]
+        },
+        "sampling_frequency": {
+            "description": "Sampling frequency for processing",
+            "oneOf": [{ "type": "number", "minimum": 0, "maximum": 1 }, { "type": "null" }]
+        },
+        "shading_correction_tiles": {
+            "description": "Number of tiles used for shading correction",
+            "oneOf": [{ "$ref": "#/definitions/semicolon_list_of_numbers" }, { "type": "null" }]
+        },
+        "shading_smoothness": {
+            "description": "Smoothness factor for shading correction",
+            "oneOf": [{ "type": "number", "minimum": 1 }, { "type": "null" }]
+        },
+        "shading_intensity": {
+            "description": "Intensity scaling factor for shading correction",
+            "oneOf": [{ "type": "number", "minimum": 1 }, { "type": "null" }]
+        },
+        "channel_alignment": {
+            "description": "Whether to perform cross-channel alignment",
+            "oneOf": [{ "type": "string", "pattern": "update" }, { "type": "null" }, { "type": "boolean" }]
+        },
+        "align_method": {
+            "description": "Method used for tile alignment",
+            "oneOf": [
+                {
+                    "type": "string",
+                    "enum": ["translation", "elastix"]
+                },
+                { "type": "null" }
+            ]
+        },
+        "align_tiles": {
+            "description": "Which tiles to align (semicolon-separated indices or null for all)",
+            "oneOf": [{ "$ref": "#/definitions/semicolon_list_of_numbers" }, { "type": "null" }]
+        },
+        "align_channels": {
+            "description": "Which channels to use for alignment (semicolon-separated or null)",
+            "$ref": "#/definitions/nullable_integer"
+        },
+        "align_slices": {
+            "description": "Which slices to align (semicolon-separated indices or null for all)",
+            "oneOf": [{ "$ref": "#/definitions/semicolon_list_of_strings" }, { "type": "null" }]
+        },
+        "update_z_adjustment": {
+            "description": "Whether to update Z-axis adjustment",
+            "$ref": "#/definitions/nullable_boolean"
+        },
+        "z_positions": {
+            "description": "Z-axis position step size",
+            "$ref": "#/definitions/nullable_number"
+        },
+        "z_window": {
+            "description": "Search window for finding corresponding tiles",
+            "$ref": "#/definitions/nullable_integer"
+        },
+        "z_initial": {
+            "description": "Initial Z position offset",
+            "$ref": "#/definitions/nullable_integer"
+        },
+        "align_stepsize": {
+            "description": "Step size used during alignment",
+            "$ref": "#/definitions/nullable_integer"
+        },
+        "only_pc": {
+            "description": "If true, use only phase correlation for alignment",
+            "$ref": "#/definitions/nullable_boolean"
+        },
+        "align_chunks": {
+            "description": "Chunk size for alignment processing",
+            "oneOf": [{ "$ref": "#/definitions/semicolon_list_of_numbers" }, { "type": "null" }]
+        },
+        "elastix_params": {
+            "description": "Elastix registration parameter preset",
+            "$ref": "#/definitions/nullable_string"
+        },
+        "pre_align": {
+            "description": "Whether to perform pre-alignment step",
+            "$ref": "#/definitions/nullable_boolean"
+        },
+        "max_chunk_size": {
+            "description": "Maximum chunk size in pixels for tiled processing",
+            "oneOf": [{ "type": "integer", "minimum": 1 }, { "type": "null" }]
+        },
+        "chunk_pad": {
+            "description": "Padding added to each chunk in pixels",
+            "oneOf": [{ "type": "integer", "minimum": 0 }, { "type": "null" }]
+        },
+        "mask_int_threshold": {
+            "description": "Intensity threshold for masking (null = auto)",
+            "oneOf": [{ "$ref": "#/definitions/semicolon_list_of_numbers" }, { "type": "null" }]
+        },
+        "resample_s": {
+            "description": "Resampling factors as semicolon-separated values (x;y;z), e.g. '3;3;1'",
+            "oneOf": [{ "$ref": "#/definitions/semicolon_list_of_numbers" }, { "type": "null" }]
+        },
+        "hist_match": {
+            "description": "Number of histogram bins used for histogram matching",
+            "oneOf": [{ "type": "integer", "minimum": 0 }, { "type": "null" }]
+        },
+        "stitch_images": {
+            "description": "Whether to run the image stitching step",
+            "oneOf": [
+                {
+                    "type": "string",
+                    "pattern": "update"
+                },
+                { "type": "null" },
+                { "type": "boolean" }
+            ]
+        },
+        "sift_refinement": {
+            "description": "Whether to apply SIFT-based refinement after alignment",
+            "$ref": "#/definitions/nullable_boolean"
+        },
+        "load_alignment_params": {
+            "description": "Whether to load previously saved alignment parameters",
+            "$ref": "#/definitions/nullable_boolean"
+        },
+        "overlap": {
+            "description": "Tile overlap fraction (0.0–1.0)",
+            "oneOf": [{ "type": "number", "minimum": 0.0, "maximum": 1.0 }, { "type": "null" }]
+        },
+        "stitch_sub_stack": {
+            "description": "Sub-stack index to stitch ",
+            "$ref": "#/definitions/nullable_integer"
+        },
+        "stitch_sub_channel": {
+            "description": "Sub-channel index to stitch (null = all)",
+            "$ref": "#/definitions/nullable_integer"
+        },
+        "stitch_start_slice": {
+            "description": "Slice index at which stitching starts",
+            "$ref": "#/definitions/nullable_integer"
+        },
+        "blending_method": {
+            "description": "Blending method used when stitching tiles",
+            "oneOf": [
+                {
+                    "type": "string",
+                    "enum": ["sigmoid", "linear", "max"]
+                },
+                { "type": "null" }
+            ]
+        },
+        "sd": {
+            "description": "Steepness of sigmoid-based blending",
+            "oneOf": [{ "type": "number", "minimum": 0, "maximum": 1 }, { "type": "null" }]
+        },
+        "border_pad": {
+            "description": " Crops borders during stitching",
+            "$ref": "#/definitions/nullable_integer"
+        },
+        "rescale_intensities": {
+            "description": "Whether to rescale pixel intensities after stitching",
+            "$ref": "#/definitions/nullable_boolean"
+        },
+        "lowerThresh": {
+            "description": "Lower intensity threshold for rescaling (null = auto)",
+            "oneOf": [{ "$ref": "#/definitions/semicolon_list_of_numbers" }, { "type": "null" }]
+        },
+        "signalThresh": {
+            "description": "Signal intensity threshold (null = auto)",
+            "oneOf": [{ "$ref": "#/definitions/semicolon_list_of_numbers" }, { "type": "null" }]
+        },
+        "upperThresh": {
+            "description": "Upper intensity threshold for rescaling (null = auto)",
+            "oneOf": [{ "$ref": "#/definitions/semicolon_list_of_numbers" }, { "type": "null" }]
+        },
+        "Gamma": {
+            "description": "Gamma correction value (null = no correction)",
+            "oneOf": [{ "type": "number", "minimum": 0 }, { "type": "null" }]
+        },
+        "subtract_background": {
+            "description": "Whether to subtract background signal",
+            "$ref": "#/definitions/nullable_boolean"
+        },
+        "nuc_radius": {
+            "description": "Expected nucleus radius in pixels, used for detection",
+            "oneOf": [{ "type": "integer", "minimum": 1 }, { "type": "null" }]
+        },
+        "DoG_img": {
+            "description": "Whether to apply Difference-of-Gaussians filter",
+            "$ref": "#/definitions/nullable_boolean"
+        },
+        "DoG_minmax": {
+            "description": "Min;Max sigma values for DoG filter, e.g. '0.8;2'",
+            "$ref": "#/definitions/semicolon_list_of_numbers"
+        },
+        "DoG_factor": {
+            "description": "Scaling factor for DoG filter response",
+            "oneOf": [{ "type": "number", "minimum": 0, "maximum": 1 }, { "type": "null" }]
+        },
+        "smooth_img": {
+            "description": "Apply a smoothing filter",
+            "oneOf": [
+                {
+                    "type": "string",
+                    "enum": ["gaussian", "median", "guided"]
+                },
+                { "type": "null" },
+                { "type": "boolean" }
+            ]
+        },
+        "smooth_sigma": {
+            "description": "Sigma value for Gaussian smoothing",
+            "oneOf": [{ "$ref": "#/definitions/semicolon_list_of_numbers" }, { "type": "null" }]
+        },
+        "flip_axis": {
+            "description": "Axis to flip image along ('none', 'x', 'y', 'z')",
+            "oneOf": [
+                {
+                    "type": "string",
+                    "enum": ["none", "horizontal", "vertical"]
+                },
+                { "type": "null" }
+            ]
+        },
+        "rotate_axis": {
+            "description": "Degrees to rotate image (0, 90, 180, 270)",
+            "oneOf": [
+                {
+                    "type": "integer",
+                    "enum": [0, 90, -90]
+                },
+                { "type": "null" }
+            ]
+        },
+        "resample_images": {
+            "description": "Whether to resample images to a target resolution",
+            "oneOf": [{ "type": "string", "pattern": "update" }, { "type": "null" }, { "type": "boolean" }]
+        },
+        "register_images": {
+            "description": "Whether to run atlas registration",
+            "oneOf": [{ "type": "string", "pattern": "update" }, { "type": "null" }, { "type": "boolean" }]
+        },
+        "count_nuclei": {
+            "description": "Whether to run nucleus counting",
+            "oneOf": [{ "type": "string", "pattern": "update" }, { "type": "null" }, { "type": "boolean" }]
+        },
+        "classify_cells": {
+            "description": "Whether to run cell classification",
+            "oneOf": [{ "type": "string", "pattern": "update" }, { "type": "null" }, { "type": "boolean" }]
+        },
+        "resample_resolution": {
+            "description": "Target isotropic resolution in microns for resampling",
+            "oneOf": [{ "type": "number", "minimum": 0 }, { "type": "null" }]
+        },
+        "resample_channels": {
+            "description": "Which channels to resample (semicolon-separated or null for all)",
+            "oneOf": [{ "$ref": "#/definitions/semicolon_list_of_numbers" }, { "type": "null" }]
+        },
+        "use_annotation_mask": {
+            "description": "Whether to use an annotation mask during processing",
+            "$ref": "#/definitions/nullable_boolean"
+        },
+        "annotation_mapping": {
+            "description": "Annotation mapping strategy",
+            "oneOf": [
+                {
+                    "type": "string",
+                    "enum": ["atlas", "image"]
+                },
+                { "type": "null" }
+            ]
+        },
+        "annotation_file": {
+            "description": "Filename of the annotation volume (.mat)",
+            "oneOf": [{ "type": "string", "pattern": "^.*\\.(mat)$" }, { "type": "null" }]
+        },
+        "annotation_resolution": {
+            "description": "Isotropic resolution of the annotation volume in microns",
+            "oneOf": [{ "type": "number", "minimum": 0 }, { "type": "null" }]
+        },
+        "registration_direction": {
+            "description": "Direction of atlas registration",
+            "oneOf": [
+                {
+                    "type": "string",
+                    "enum": ["atlas_to_image", "image_to_atlas"]
+                },
+                { "type": "null" }
+            ]
+        },
+        "registration_parameters": {
+            "description": "Registration parameter set to use",
+            "oneOf": [{ "type": "string" }, { "type": "null" }]
+        },
+        "registration_channels": {
+            "description": "Channel index (1-based) used for atlas registration",
+            "oneOf": [{ "type": "integer", "minimum": 1 }, { "type": "null" }]
+        },
+        "registration_prealignment": {
+            "description": "Prealignment target for registration ('image' or 'atlas')",
+            "oneOf": [
+                {
+                    "type": "string",
+                    "enum": ["image"]
+                },
+                { "type": "null" }
+            ]
+        },
+        "atlas_file": {
+            "description": "Filename of the atlas volume (.nii or .mat)",
+            "$ref": "#/definitions/nullable_string"
+        },
+        "use_points": {
+            "description": "Whether to use landmark points for registration",
+            "$ref": "#/definitions/nullable_boolean"
+        },
+        "prealign_annotation_index": {
+            "description": "Annotation index used during pre-alignment",
+            "$ref": "#/definitions/nullable_integer"
+        },
+        "points_file": {
+            "description": "Path to landmarks/points file for registration",
+            "$ref": "#/definitions/nullable_string"
+        },
+        "save_registered_images": {
+            "description": "Whether to save the registered image volumes",
+            "$ref": "#/definitions/nullable_boolean"
+        },
+        "mask_cerebellum_olfactory": {
+            "description": "Whether to mask out cerebellum and olfactory bulb regions",
+            "$ref": "#/definitions/nullable_boolean"
+        },
+        "count_method": {
+            "description": "Nucleus counting method to use",
+            "oneOf": [
+                {
+                    "type": "string",
+                    "enum": ["3dunet"]
+                },
+                { "type": "null" }
+            ]
+        },
+        "min_intensity": {
+            "description": "Minimum intensity threshold for nucleus detection",
+            "oneOf": [{ "type": "integer", "minimum": 0 }, { "type": "null" }]
+        },
+        "model_file": {
+            "description": "Absolute path to the trained model file (.h5)",
+            "oneOf": [{ "type": "string" }, { "type": "null" }]
+        },
+        "gpu": {
+            "description": "GPU device index to use (0-based; 0 = first GPU)",
+            "oneOf": [{ "type": "integer", "minimum": 0 }, { "type": "null" }]
+        },
+        "chunk_size": {
+            "description": "Chunk size in voxels for inference",
+            "oneOf": [{ "$ref": "#/definitions/semicolon_list_of_numbers" }, { "type": "null" }]
+        },
+        "chunk_overlap": {
+            "description": "Overlap in voxels between inference chunks (null = auto)",
+            "oneOf": [{ "$ref": "#/definitions/semicolon_list_of_numbers" }, { "type": "null" }]
+        },
+        "pred_threshold": {
+            "description": "Prediction confidence threshold for nucleus detection (0.0–1.0)",
+            "oneOf": [{ "type": "number", "minimum": 0, "maximum": 1 }, { "type": "null" }]
+        },
+        "normalize_intensity": {
+            "description": "Whether to normalize intensity before inference",
+            "$ref": "#/definitions/nullable_boolean"
+        },
+        "resample_chunks": {
+            "description": "Whether to resample chunks before inference",
+            "$ref": "#/definitions/nullable_boolean"
+        },
+        "tree_radius": {
+            "description": " Pixel radius for removing centroids near each other",
+            "$ref": "#/definitions/nullable_number"
+        },
+        "acquired_img_resolution": {
+            "description": "Resolution of the acquired raw images in microns",
+            "oneOf": [{ "$ref": "#/definitions/semicolon_list_of_numbers" }, { "type": "null" }]
+        },
+        "trained_img_resolution": {
+            "description": "Resolution at which the model was trained (semicolon-separated x;y;z in microns)",
+            "oneOf": [{ "$ref": "#/definitions/semicolon_list_of_numbers" }, { "type": "null" }]
+        },
+        "measure_coloc": {
+            "description": "Whether to measure co-localization between channels",
+            "$ref": "#/definitions/nullable_boolean"
+        },
+        "n_channels": {
+            "description": "Number of channels to predict on.",
+            "$ref": "#/definitions/nullable_integer"
+        },
+        "use_mask": {
+            "description": "Whether to apply a mask during quantification",
+            "$ref": "#/definitions/nullable_boolean"
+        },
+        "mask_file": {
+            "description": "Path to the mask file (null = not used)",
+            "$ref": "#/definitions/nullable_string"
+        }
+    },
+    "minProperties": 102
+}

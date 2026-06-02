@@ -72,7 +72,6 @@ runs:
 
           # Save the absolute path of the test.tap file to the output
           echo "tap_file_path=$(realpath test.tap)" >> $GITHUB_OUTPUT
-
     - name: Generate test summary
       if: always()
       shell: bash
@@ -85,6 +84,7 @@ runs:
           echo "|:------:|-----------|---------|-------|" >> $GITHUB_STEP_SUMMARY
           touch .summary_header
         fi
+
 
         if [ -f test.tap ]; then
           while IFS= read -r line; do

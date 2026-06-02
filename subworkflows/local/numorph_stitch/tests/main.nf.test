@@ -1,0 +1,110 @@
+nextflow_workflow {
+
+    name "Test Subworkflow NUMORPH_STITCH"
+    script "../main.nf"
+    workflow "NUMORPH_STITCH"
+
+    tag "subworkflows"
+    tag "subworkflows_"
+    tag "subworkflows/numorph_stitch"
+    tag "numorph"
+    tag "numorph preprocessing"
+    tag "numorph intensity"
+    tag "numorph stitch"
+
+
+    test("numorph intensity and stitch tiff") {
+
+        setup {
+            run ("UNZIP") {
+                script "../../../../modules/nf-core/unzip/main.nf"
+                process {
+                    """
+                    input[0] = Channel.fromList([
+                        tuple([ id:'TEST1'],
+                        file('https://zenodo.org/records/14916478/files/ctip2_topro.zip'))
+                    ])
+                """
+                }
+            }
+        }
+        when {
+            params {
+                outdir = "$outputDir"
+            }
+            workflow {
+                """
+                input[0] = UNZIP.out.unzipped_archive.map { meta, unzipped_archive ->
+                    tuple(
+                    meta,
+                    unzipped_archive,
+                    file(params.pipelines_testdata_base_path + '/test_data/parameterfiles/params_TEST1_lsmquant.csv'))
+                }
+                """
+            }
+        }
+
+        then {
+            def stable_name = getAllFilesFromDir(params.outdir, relative: true, includeDir: true, ignore: ['pipeline_info/*.{html,json,txt}'])
+            def stable_path = getAllFilesFromDir(params.outdir, ignoreFile: 'tests/.nftignore')
+            assert workflow.success
+            assertAll(
+                { assert snapshot(
+                    // Number of successful tasks
+                    workflow.trace.succeeded().size(),
+                    // All stable path name, with a relative path
+                    stable_name.isEmpty() ? 'No stable paths' : stable_name,
+                    // All files with stable contents
+                    stable_path
+                ).match()}
+            )
+        }
+    }
+    test("numorph intensity and stitch stub") {
+
+        options "-stub"
+        setup {
+            run ("UNZIP") {
+                script "../../../../modules/nf-core/unzip/main.nf"
+                process {
+                    """
+                    input[0] = Channel.fromList([
+                        tuple([ id:'TEST1'],
+                        file('https://zenodo.org/records/14916478/files/ctip2_topro.zip'))
+                    ])
+                """
+                }
+            }
+        }
+        when {
+            params {
+                outdir = "$outputDir"
+            }
+            workflow {
+                """
+                input[0] = UNZIP.out.unzipped_archive.map { meta, unzipped_archive ->
+                    tuple(
+                    meta,
+                    unzipped_archive,
+                    file(params.pipelines_testdata_base_path + '/test_data/parameterfiles/params_TEST1_lsmquant.csv'))
+                }
+                """
+            }
+        }
+        then {
+            def stable_name = getAllFilesFromDir(params.outdir, relative: true, includeDir: true, ignore: ['pipeline_info/*.{html,json,txt}'])
+            def stable_path = getAllFilesFromDir(params.outdir, ignoreFile: 'tests/.nftignore')
+            assert workflow.success
+            assertAll(
+                { assert snapshot(
+                    // Number of successful tasks
+                    workflow.trace.succeeded().size(),
+                    // All stable path name, with a relative path
+                    stable_name.isEmpty() ? 'No stable paths' : stable_name,
+                    // All files with stable contents
+                    stable_path
+                ).match()}
+            )
+        }
+    }
+}

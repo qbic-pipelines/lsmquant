@@ -1,0 +1,49 @@
+# yaml-language-server: $schema=https://raw.githubusercontent.com/nf-core/modules/master/subworkflows/yaml-schema.json
+name: "numorph_preprocessing"
+description: preprocessing (intensity adjustment, alignment, stitching) of 2D single channel single tile TIFF images.
+keywords:
+  - intensity
+  - alignment
+  - stitching
+  - tiff
+components:
+  - numorphintensity
+  - numorphalign
+  - numorphstitch
+  - mat2json
+input:
+  - samplesheet:
+      type: tuple
+      description: |
+        The input channel containing the metadata, image directory and parameter file.
+        Structure: [ val(meta), path(img_directory), path(parameter_file)]
+      pattern: "*.{tif/tiff/csv}"
+output:
+  - stitched:
+      type: path
+      description: |
+        Channel containing path to stitched Tiff files
+        Structure: [ val(meta), path(stitched) ]
+      pattern: "*.tif/tiff"
+  - intensity_thresholds:
+      type: file
+      description: |
+        Channel containing intensity threshold (MAT) file
+        Structure:  path(thresholds_mat)
+      pattern: "*.mat"
+  - NM_variables:
+      type: file
+      description: |
+        Channel containing numorph processing parameter file (MAT)
+        Structure:  path(NM_variables.mat)
+      pattern: "*.mat"
+  - versions:
+      type: file
+      description: |
+        File containing software versions
+        Structure: [ path(versions.yml) ]
+      pattern: "versions.yml"
+authors:
+  - "@CaroAMN"
+maintainers:
+  - "@CaroAMN"

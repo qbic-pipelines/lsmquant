@@ -1,0 +1,40 @@
+nextflow_workflow {
+
+    name "Test Subworkflow ARAREGISTRATION"
+    script "../main.nf"
+    workflow "ARAREGISTRATION"
+
+    tag "subworkflows"
+    tag "subworkflows_nfcore"
+    tag "subworkflows/araregistration"
+
+    tag "numorphresample"
+    tag "numorphregister"
+
+
+
+    // only stub test possible
+    test("ARA registration stub test") {
+
+        options '-stub'
+
+        when {
+            workflow {
+                """
+                input[0] = Channel.fromList([
+                        tuple([ id:'TEST1'],
+                        file('https://zenodo.org/records/14916478/files/ctip2_topro.zip'),
+                        file(params.pipelines_testdata_base_path + '/test_data/parameterfiles/params_TEST1_lsmquant.csv'))
+                        ])
+                """
+            }
+        }
+
+        then {
+            assertAll(
+                { assert workflow.success},
+                { assert snapshot(workflow.out).match()}
+            )
+        }
+    }
+}

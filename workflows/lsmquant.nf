@@ -3,17 +3,28 @@
     IMPORT MODULES / SUBWORKFLOWS / FUNCTIONS
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 */
-include { MULTIQC                } from '../modules/nf-core/multiqc/main'
+include { NUMORPH_PREPROCESSING  } from '../subworkflows/local/numorph_preprocessing'
+include { ARAREGISTRATION        } from '../subworkflows/local/araregistration'
+include { NUMORPH_STITCH         } from '../subworkflows/local/numorph_stitch'
 include { paramsSummaryMap       } from 'plugin/nf-schema'
 include { paramsSummaryMultiqc   } from '../subworkflows/nf-core/utils_nfcore_pipeline'
 include { softwareVersionsToYAML } from '../subworkflows/nf-core/utils_nfcore_pipeline'
 include { methodsDescriptionText } from '../subworkflows/local/utils_nfcore_lsmquant_pipeline'
+include { MAT2JSON               } from '../modules/local/mat2json'
+include { NUMORPH3DUNET          } from '../modules/local/numorph3dunet'
+include { UNZIP                  } from '../modules/nf-core/unzip'
+include { STAGEFILES             } from '../modules/local/stagefiles'
+include { MULTIQC                } from '../modules/nf-core/multiqc'
+include { NUMORPHSTITCH          } from '../modules/local/numorphstitch'
+include { VALIDATE_PARAMETERS    } from '../modules/local/validate_parameters'
 
 /*
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
     RUN MAIN WORKFLOW
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 */
+
+
 
 workflow LSMQUANT {
 
@@ -28,8 +39,125 @@ workflow LSMQUANT {
 
     def ch_versions = channel.empty()
     def ch_multiqc_files = channel.empty()
+    samplesheet // channel: samplesheet read in from --input
 
-    //
+
+    // validate numorph specific parameters
+    ch_parameter_file = samplesheet.map { meta, img_dir, parameter_file -> [meta, parameter_file] }
+    schema_json = file("${projectDir}/assets/numorph_params_schema.json")
+    VALIDATE_PARAMETERS(ch_parameter_file, schema_json)
+
+    // branch input channel based on whether zip archive or directory
+    samplesheet.branch { meta, img_directory, parameter_file ->
+        zip_archive: img_directory[0].endsWith(".zip")
+            return tuple(meta, img_directory, parameter_file)
+        directory: true
+            return tuple(meta, img_directory, parameter_file)
+    }
+    .set { samplesheet_split }
+
+
+    // if zip archive then unzip first
+    samplesheet_split.zip_archive
+        .map { meta, zip, parameter_file ->
+            tuple(meta, zip)
+        }
+        .set { zip_archive }
+
+    UNZIP (zip_archive)
+    unzipped_output = UNZIP.out.unzipped_archive
+    // join unzipped output with  parameter file
+    unzipped_output
+        .join(samplesheet_split.zip_archive)
+        .map { meta, unzipped, zip, parameter_file ->
+            tuple(meta, unzipped, parameter_file)
+        }
+        .set { ch_unzipped }
+
+    // if directory then stage files
+    samplesheet_split.directory
+        .map { meta, img_directory, parameter_file ->
+            tuple(meta, img_directory)
+        }
+        .set { img_dir }
+
+    STAGEFILES (img_dir)
+    staged_images = STAGEFILES.out.raw_files
+
+    staged_images
+        .join(samplesheet_split.directory)
+        .map { meta, staged, raw_img_directory, parameter_file ->
+            tuple(meta, staged, parameter_file)
+        }
+        .set { ch_stagedfiles }
+
+    // combine unzipped and staged files channels
+    ch_samplesheet = Channel.empty()
+    ch_samplesheet = ch_unzipped.mix(ch_stagedfiles)
+
+
+
+    // run only stitching
+    if (params.stage == 'stitch_only') {
+        // create empty channels for intensity adjustment outputs
+
+        def stitch_input = ch_samplesheet
+                .map { meta, img_directory, parameter_file ->
+                    [meta, img_directory, parameter_file, [],[]]
+                }
+
+        NUMORPHSTITCH (stitch_input)
+        stitched_output = NUMORPHSTITCH.out.stitched
+
+        // get all mat files
+        def mat_files = NUMORPHSTITCH.out.variables_stitched
+        .flatMap { meta, variables_dir ->
+            variables_dir.listFiles()
+                .findAll { it.name.endsWith('.mat') }
+                .collect { matfile ->  [meta, matfile] }
+        }
+
+        MAT2JSON (mat_files, "stitch_only" )
+
+    }
+
+    // run single channel preprocessing by intensity and stitching
+    if (params.stage == 'int_stitch') {
+
+        NUMORPH_STITCH (ch_samplesheet)
+        stitched_output = NUMORPH_STITCH.out.stitched
+
+    }
+
+    // run preprocessing with multi channel alignment and stitching
+    if (params.stage == 'int_align_stitch') {
+
+        NUMORPH_PREPROCESSING (ch_samplesheet)
+        stitched_output= NUMORPH_PREPROCESSING.out.stitched
+
+    }
+
+    stitched_data = ch_samplesheet
+            .join (stitched_output)
+            .map { meta, img_directory, parameter_file, stitched_data ->
+                [meta, stitched_data, parameter_file]
+            }
+
+    // run nuclei quantification
+    if (params.nuclei_quantification) {
+
+        model_file = file(params.model_file, checkIfExists: !params.model_file.startsWith('http'))
+        NUMORPH3DUNET (stitched_data, model_file)
+
+    }
+    // run ara registration
+    if (params.ara_registration) {
+
+            ARAREGISTRATION (stitched_data)
+
+        }
+
+
     // Collate and save software versions
     //
     def topic_versions = channel.topic("versions")
@@ -58,7 +186,7 @@ workflow LSMQUANT {
             newLine: true
         )
 
-    //
+     //
     // MODULE: MultiQC
     //
     ch_multiqc_files = ch_multiqc_files.mix(ch_collated_versions)
@@ -87,6 +215,7 @@ workflow LSMQUANT {
     emit:multiqc_report = MULTIQC.out.report.map { _meta, report -> [report] }.toList() // channel: /path/to/multiqc_report.html
     versions       = ch_versions                 // channel: [ path(versions.yml) ]
 }
+
 
 /*
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~

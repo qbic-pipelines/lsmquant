@@ -28,7 +28,6 @@ include { PIPELINE_COMPLETION     } from './subworkflows/local/utils_nfcore_lsmq
 // WORKFLOW: Run main analysis pipeline depending on type of input
 //
 workflow NFCORE_LSMQUANT {
-
     take:
     samplesheet // channel: samplesheet read in from --input
 
@@ -45,7 +44,8 @@ workflow NFCORE_LSMQUANT {
         params.outdir,
     )
     emit:
-    multiqc_report = LSMQUANT.out.multiqc_report // channel: /path/to/multiqc_report.html
+    multiqc_report = LSMQUANT.out.multiqc_report
+
 }
 /*
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~

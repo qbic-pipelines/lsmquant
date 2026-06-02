@@ -1,0 +1,55 @@
+# yaml-language-server: $schema=https://raw.githubusercontent.com/nf-core/modules/master/modules/meta-schema.json
+name: "stagefiles"
+description: A helper module to stage files from a directory into the work directory
+keywords:
+  - staging
+  - empty module
+  - files
+  - helper
+tools:
+  - "stagefiles":
+      description: "This is an empty module for staging files into the work directory of the nf-core/lsmquant pipeline."
+      homepage: ""
+      documentation: ""
+      tool_dev_url: ""
+      doi: ""
+      licence: null
+      identifier: null
+
+input:
+  - - meta:
+        type: map
+        description: |
+          Groovy Map containing sample information
+          e.g. `[ id:'sample1' ]`
+    - file_directory:
+        type: directory
+        description: a directory containing any files
+        pattern: ""
+        ontologies:
+
+output:
+  raw_files:
+    - - meta:
+          type: map
+          description: |
+            Groovy Map containing sample information
+            e.g. `[ id:'sample1' ]`
+      - "/*.*":
+          type: files
+          description: All files from the directory
+          pattern: "/*.*"
+          ontologies:
+
+  versions:
+    - "versions.yml":
+        type: file
+        description: File containing software versions
+        pattern: "versions.yml"
+        ontologies:
+          - edam: "http://edamontology.org/format_3750" # YAML
+
+authors:
+  - "@CaroAMN"
+maintainers:
+  - "@CaroAMN"

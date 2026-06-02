@@ -1,0 +1,25 @@
+nextflow_process {
+    name "Test VALIDATE_PARAMETERS"
+    script "../main.nf"
+    process "VALIDATE_PARAMETERS"
+
+    test("Should pass with valid parameters") {
+        when {
+            process {
+                """
+                input[0] = [
+                    [id: 'test_sample'],
+                    file('${projectDir}/assets/params_template_lsmquant.csv')
+                ]
+                input[1] = file('${projectDir}/assets/numorph_params_schema.json')
+                """
+            }
+        }
+
+        then {
+            assert process.success
+            def stdout_text = process.out.validated[0][2]
+            assert stdout_text.contains("✓ Validation passed")
+        }
+    }
+}

@@ -16,11 +16,8 @@
                     "type": "string",
                     "format": "file-path",
                     "exists": true,
-                    "schema": "assets/schema_input.json",
-                    "mimetype": "text/csv",
-                    "pattern": "^\\S+\\.csv$",
                     "description": "Path to comma-separated file containing information about the samples in the experiment.",
-                    "help_text": "You will need to create a design file with information about the samples in your experiment before running the pipeline. Use this parameter to specify its location. It has to be a comma-separated file with 3 columns, and a header row. See [usage docs](https://nf-co.re/lsmquant/usage#samplesheet-input).",
+                    "help_text": " You will need to create a design file with information about the samples in your experiment before running the pipeline. Use this parameter to specify its location. It has to be a comma-separated file with 3 columns, and a header row. See [usage docs](https://nf-co.re/testpipeline/usage#samplesheet-input).",
                     "fa_icon": "fas fa-file-csv"
                 },
                 "outdir": {
@@ -28,6 +25,32 @@
                     "format": "directory-path",
                     "description": "The output directory where the results will be saved. You have to use absolute paths to storage on Cloud infrastructure.",
                     "fa_icon": "fas fa-folder-open"
+                },
+                "stage": {
+                    "type": "string",
+                    "description": "The stage of the pipeline to run.",
+                    "help_text": "The stage of the pipeline to run. The pipeline has multiple stages that can be run separately or the complete pipeline can be run. Stages are: `int_stitch`, `int_align_stitch`, `stitch_only`",
+                    "fa_icon": "fas fa-cogs",
+                    "enum": ["int_stitch", "int_align_stitch", "stitch_only"]
+                },
+                "ara_registration": {
+                    "type": "boolean",
+                    "description": "Performs Allen Reference Atlas registration of stitched images.",
+                    "help_text": "Performs Allen Reference Atlas registration of stitched images. This step is optional and can be skipped if the images are already registered.",
+                    "fa_icon": "fas fa-file-image"
+                },
+                "nuclei_quantification": {
+                    "type": "boolean",
+                    "description": "Performs cell nuclei quantification using a pre-trained model.",
+                    "help_text": "Performs cell nuclei quantification using a pre-trained model. This step is optional and can be skipped if not needed.",
+                    "fa_icon": "fas fa-calculator"
+                },
+                "model_file": {
+                    "type": "string",
+                    "description": "Path to the pre-trained model file.",
+                    "help_text": "Path to the pre-trained model file for cell nuclei segmentation. It can be a local file path or the default is the URL to the model stored at Zenodo.",
+                    "fa_icon": "fas fa-file-image",
+                    "default": "https://zenodo.org/records/16893708/files/075_121_model.h5"
                 },
                 "email": {
                     "type": "string",
@@ -170,7 +193,7 @@
                     "type": "string",
                     "fa_icon": "far fa-check-circle",
                     "description": "Base URL or local path to location of pipeline test dataset files",
-                    "default": "https://raw.githubusercontent.com/nf-core/test-datasets/",
+                    "default": "https://raw.githubusercontent.com/nf-core/test-datasets/lsmquant/",
                     "hidden": true
                 },
                 "trace_report_suffix": {

@@ -1,0 +1,53 @@
+# yaml-language-server: $schema=https://raw.githubusercontent.com/nf-core/modules/master/subworkflows/yaml-schema.json
+name: "araregistration"
+description: Image registration of 2D stitched images to the Allan reference atlas
+keywords:
+  - registration
+  - mouse brain
+  - atlas
+components:
+  - numorphresample
+  - numorphregister
+  - mat2json
+input:
+  - stitched_data:
+      type: path
+      description: |
+        The input channel containing the stitched TIFF files and the parameter file
+        Structure: [ val(meta), path(stitched),  path(parameters) ]
+      pattern: "*.tif/tiff/csv"
+  - NM_variables:
+      type: path
+      description: |
+        The input channel containing the numorph processing parameter file (MAT)
+        Structure: [ val(meta), path(NM_variables) ]
+      pattern: "*.mat"
+output:
+  - reg_mask:
+      type: file
+      description: |
+        Channel containing registration mask file
+        Structure: path(mat)
+      pattern: "*.mat"
+  - registered:
+      type: path
+      description: |
+        Channel containing path to registered image files
+        Structure:  path(nii)
+      pattern: "*.nii"
+  - NM_variables:
+      type: file
+      description: |
+        Channel containing numorph processing parameter file (MAT)
+        Structure:  path(NM_variables.mat)
+      pattern: "*.mat"
+  - versions:
+      type: file
+      description: |
+        File containing software versions
+        Structure: [ path(versions.yml) ]
+      pattern: "versions.yml"
+authors:
+  - "@CaroAMN"
+maintainers:
+  - "@CaroAMN"

@@ -1,0 +1,145 @@
+{
+    "numorph stitch test": {
+        "content": [
+            [
+                "adj_params.mat",
+                "adjusted_z.mat",
+                "path_table.mat",
+                "stitch_tforms.mat",
+                "thresholds.mat",
+                "z_disp_matrix.mat"
+            ],
+            [
+                "TEST1_0001_C1_topro_stitched.tif",
+                "TEST1_0001_C2_ctip2_stitched.tif",
+                "TEST1_0002_C1_topro_stitched.tif",
+                "TEST1_0002_C2_ctip2_stitched.tif",
+                "TEST1_0003_C1_topro_stitched.tif",
+                "TEST1_0003_C2_ctip2_stitched.tif",
+                "TEST1_0004_C1_topro_stitched.tif",
+                "TEST1_0004_C2_ctip2_stitched.tif",
+                "TEST1_0005_C1_topro_stitched.tif",
+                "TEST1_0005_C2_ctip2_stitched.tif",
+                "TEST1_0006_C1_topro_stitched.tif",
+                "TEST1_0006_C2_ctip2_stitched.tif",
+                "TEST1_0007_C1_topro_stitched.tif",
+                "TEST1_0007_C2_ctip2_stitched.tif",
+                "TEST1_0008_C1_topro_stitched.tif",
+                "TEST1_0008_C2_ctip2_stitched.tif",
+                "TEST1_0009_C1_topro_stitched.tif",
+                "TEST1_0009_C2_ctip2_stitched.tif",
+                "TEST1_0010_C1_topro_stitched.tif",
+                "TEST1_0010_C2_ctip2_stitched.tif",
+                "TEST1_0011_C1_topro_stitched.tif",
+                "TEST1_0011_C2_ctip2_stitched.tif",
+                "TEST1_0012_C1_topro_stitched.tif",
+                "TEST1_0012_C2_ctip2_stitched.tif",
+                "TEST1_0013_C1_topro_stitched.tif",
+                "TEST1_0013_C2_ctip2_stitched.tif",
+                "TEST1_0014_C1_topro_stitched.tif",
+                "TEST1_0014_C2_ctip2_stitched.tif",
+                "TEST1_0015_C1_topro_stitched.tif",
+                "TEST1_0015_C2_ctip2_stitched.tif",
+                "TEST1_0016_C1_topro_stitched.tif",
+                "TEST1_0016_C2_ctip2_stitched.tif",
+                "TEST1_0017_C1_topro_stitched.tif",
+                "TEST1_0017_C2_ctip2_stitched.tif",
+                "TEST1_0018_C1_topro_stitched.tif",
+                "TEST1_0018_C2_ctip2_stitched.tif"
+            ],
+            null
+        ],
+        "timestamp": "2026-03-17T17:46:00.900539825",
+        "meta": {
+            "nf-test": "0.9.4",
+            "nextflow": "25.10.3"
+        }
+    },
+    "numorph stitch stub test": {
+        "content": [
+            {
+                "0": [
+                    [
+                        {
+                            "id": "TEST1"
+                        },
+                        [
+                            "TEST1_stitched.tif:md5,d41d8cd98f00b204e9800998ecf8427e"
+                        ]
+                    ]
+                ],
+                "1": [
+                    [
+                        {
+                            "id": "TEST1"
+                        },
+                        [
+                            "adjusted_z.mat:md5,d41d8cd98f00b204e9800998ecf8427e",
+                            "path_table.mat:md5,d41d8cd98f00b204e9800998ecf8427e",
+                            "stitch_tforms.mat:md5,d41d8cd98f00b204e9800998ecf8427e",
+                            "z_dips_matrix.mat:md5,d41d8cd98f00b204e9800998ecf8427e"
+                        ]
+                    ]
+                ],
+                "2": [
+                    [
+                        {
+                            "id": "TEST1"
+                        },
+                        "NM_variables.mat:md5,d41d8cd98f00b204e9800998ecf8427e"
+                    ]
+                ],
+                "3": [
+                    [
+                        "NUMORPHSTITCH",
+                        "numorph_stitch",
+                        "1.0.0"
+                    ]
+                ],
+                "NM_variable": [
+                    [
+                        {
+                            "id": "TEST1"
+                        },
+                        "NM_variables.mat:md5,d41d8cd98f00b204e9800998ecf8427e"
+                    ]
+                ],
+                "stitched": [
+                    [
+                        {
+                            "id": "TEST1"
+                        },
+                        [
+                            "TEST1_stitched.tif:md5,d41d8cd98f00b204e9800998ecf8427e"
+                        ]
+                    ]
+                ],
+                "variables_stitched": [
+                    [
+                        {
+                            "id": "TEST1"
+                        },
+                        [
+                            "adjusted_z.mat:md5,d41d8cd98f00b204e9800998ecf8427e",
+                            "path_table.mat:md5,d41d8cd98f00b204e9800998ecf8427e",
+                            "stitch_tforms.mat:md5,d41d8cd98f00b204e9800998ecf8427e",
+                            "z_dips_matrix.mat:md5,d41d8cd98f00b204e9800998ecf8427e"
+                        ]
+                    ]
+                ],
+                "versions_numorph_stitch": [
+                    [
+                        "NUMORPHSTITCH",
+                        "numorph_stitch",
+                        "1.0.0"
+                    ]
+                ]
+            }
+        ],
+        "timestamp": "2026-03-17T17:46:20.120876903",
+        "meta": {
+            "nf-test": "0.9.4",
+            "nextflow": "25.10.3"
+        }
+    }
+}

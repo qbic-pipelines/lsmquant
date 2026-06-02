@@ -12,47 +12,56 @@
 
 [![Nextflow](https://img.shields.io/badge/version-%E2%89%A525.10.4-green?style=flat&logo=nextflow&logoColor=white&color=%230DC09D&link=https%3A%2F%2Fnextflow.io)](https://www.nextflow.io/)
 [![nf-core template version](https://img.shields.io/badge/nf--core_template-4.0.2-green?style=flat&logo=nfcore&logoColor=white&color=%2324B064&link=https%3A%2F%2Fnf-co.re)](https://github.com/nf-core/tools/releases/tag/4.0.2)
-[![run with conda](http://img.shields.io/badge/run%20with-conda-3EB049?labelColor=000000&logo=anaconda)](https://docs.conda.io/en/latest/)
 [![run with docker](https://img.shields.io/badge/run%20with-docker-0db7ed?labelColor=000000&logo=docker)](https://www.docker.com/)
 [![run with singularity](https://img.shields.io/badge/run%20with-singularity-1d355c.svg?labelColor=000000)](https://sylabs.io/docs/)
 [![Launch on Seqera Platform](https://img.shields.io/badge/Launch%20%F0%9F%9A%80-Seqera%20Platform-%234256e7)](https://cloud.seqera.io/launch?pipeline=https://github.com/nf-core/lsmquant)
 
 [![Get help on Slack](http://img.shields.io/badge/slack-nf--core%20%23lsmquant-4A154B?labelColor=000000&logo=slack)](https://nfcore.slack.com/channels/lsmquant)[![Follow on Bluesky](https://img.shields.io/badge/bluesky-%40nf__core-1185fe?labelColor=000000&logo=bluesky)](https://bsky.app/profile/nf-co.re)[![Follow on Mastodon](https://img.shields.io/badge/mastodon-nf__core-6364ff?labelColor=FFFFFF&logo=mastodon)](https://mstdn.science/@nf_core)[![Watch on YouTube](http://img.shields.io/badge/youtube-nf--core-FF0000?labelColor=000000&logo=youtube)](https://www.youtube.com/c/nf-core)
+![HiRSE Code Promo Badge](https://img.shields.io/badge/Promo-8db427?style=plastic&label=HiRSE&labelColor=005aa0&link=https%3A%2F%2Fgo.fzj.de%2FCodePromo)
 
 ## Introduction
 
-**nf-core/lsmquant** is a bioinformatics pipeline that ...
+**nf-core/lsmquant** is a bioinformatics pipeline that performs preprocessing and analysis of light-sheet microscopy images of tissue cleared samples. The pipeline takes raw images from a directory or a zip archive as input. The images need to be in a 2D single-channel 16-bit `tif`format.
 
-<!-- TODO nf-core:
-   Complete this sentence with a 2-3 sentence summary of what types of data the pipeline ingests, a brief overview of the
-   major pipeline sections and the types of output it produces. You're giving an overview to someone new
-   to nf-core here, in 15-20 seconds. For an example, see https://github.com/nf-core/rnaseq/blob/master/README.md#introduction
--->
+![lsmquant metromap](docs/images/lsmquant-metromap.svg)
 
-<!-- TODO nf-core: Include a figure that guides the user through the major workflow steps. Many nf-core
-     workflows use the "tube map" design for that. See https://nf-co.re/docs/community/brand/workflow-schematics#examples for examples.   -->
-<!-- TODO nf-core: Fill in short bullet-pointed list of the default steps in the pipeline -->2. Present QC for raw reads ([`MultiQC`](http://multiqc.info/))
+## Pipeline Summary
+
+The pipeline consists of 3 major components: Preprocessing, Cell-Nuclei quantification, and Allen Reference Atlas registration. A detailed explanation on each method can be found in the [methods description](./docs/usage#methods-description) section of the usage documentation.
+
+**Preprocessing**
+
+This stage reconstructs the 3D image from raw light-sheet data. Here three different workflows can be chosen:
+
+1. `int_align_stitch`: Performs intensity adjustment, channel alignment, and iterative tile stitching
+
+2. `int_stitch`: Performs intensity adjustment and iterative tile stitching.
+
+3. `stitch_only`: Performs only iterative tile stitching
+
+**Cell Nuclei Quantification**
+
+Quantification of cell-nuclei is performed using a 3D-Unet and it is performed on the nuclear channel only. This is an optional workflow and can be chosen by setting the parameter:[`nuclei_quantification`](./parameters#nuclei_quantification)
+
+**Allen Brain Atlas Registration (Optional)**
+
+This workflow registers full brain images to the Allen Brain Reference Atlas. This is an optional workflow and can be chosen by setting the parameter: [`ara_registration`](./parameters/#ara_registration)
 
 ## Usage
 
 > [!NOTE]
 > If you are new to Nextflow and nf-core, please refer to [this page](https://nf-co.re/docs/get_started/environment_setup/overview) on how to set-up Nextflow. Make sure to [test your setup](https://nf-co.re/docs/get_started/run-your-first-pipeline) with `-profile test` before running the workflow on actual data.
 
-<!-- TODO nf-core: Describe the minimum required steps to execute the pipeline, e.g. how to prepare samplesheets.
-     Explain what rows and columns represent. For instance (please edit as appropriate):
+To run the pipeline you need to provide a samplesheet with your data in the following structure:
 
-First, prepare a samplesheet with your input data that looks as follows:
-
-`samplesheet.csv`:
-
-```csv
-sample,fastq_1,fastq_2
-CONTROL_REP1,AEG588A1_S1_L002_R1_001.fastq.gz,AEG588A1_S1_L002_R2_001.fastq.gz
+```csv title="samplesheet.csv
+sample_id,img_directory,parameter_file
+TEST1,path/to/image-files,path/to/parameter/file.csv
 ```
 
-Each row represents a fastq file (single-end) or a pair of fastq files (paired end).
+The parameter csv file includes sample specific parameters that are used for processing the given data. It needs to follow a specific structure.
 
--->
+Please get the basic template file [here](../assets/params_template_lsmquant.csv).
 
 Now, you can run the pipeline using:
 
@@ -61,8 +70,9 @@ Now, you can run the pipeline using:
 ```bash
 nextflow run nf-core/lsmquant \
    -profile <docker/singularity/.../institute> \
-   --input samplesheet.csv \
-   --outdir <OUTDIR>
+   --input <samplesheet.csv> \
+   --outdir <OUTDIR> \
+   --stage <stage>
 ```
 
 > [!WARNING]
@@ -78,11 +88,31 @@ For more details about the output files and reports, please refer to the
 
 ## Credits
 
-nf-core/lsmquant was originally written by Carolin Schwitalla.
+nf-core/lsmquant was originally written by [Carolin Schwitalla](https://github.com/CaroAMN) at the Quantitative Biology Center and the University of Tuebingen ([QBiC](https://www.info.qbic.uni-tuebingen.de/)) in collaboration with the [Stein Lab](https://www.steinlab.org/) at the University of North Carolina.
+
+The pipeline is mainly based on the NuMorph (Nuclear-Based Morphometry) toolbox developed by Krupa et al., 2021.
+
+> **NuMorph: Tools for cortical cellular phenotyping in tissue-cleared whole-brain images**
+>
+> Krupa O, Fragola G, Hadden-Ford E, Mory JT, Liu T, Humphrey Z, Rees BW, Krishnamurthy A, Snider WD, Zylka MJ, Wu G, Xing L, Stein JL.
+>
+> Cell Rep. 2021 Oct 12, doi: [10.1016/j.celrep.2021.109802](https://doi.org/10.1016%2Fj.celrep.2021.109802)
 
 We thank the following people for their extensive assistance in the development of this pipeline:
 
-<!-- TODO nf-core: If applicable, make list of people who have also contributed -->
+[Matthias Hörtenhuber](https://github.com/mashehu)\
+[Famke Bäuerle](https://github.com/famosab)\
+[Mark Polster](https://github.com/mapo9)\
+[Susi Jo](https://github.com/SusiJo)\
+[Luis Kuhn Cuellar](https://github.com/luiskuhn)\
+[Daniel Straub](https://github.com/d4straub)\
+[Niklas Grote](https://github.com/HomoPolyethylen)\
+[Jason Stein](https://www.steinlab.org/)\
+[Felix Kyere](https://www.steinlab.org/)\
+[Ian Curtin](https://www.steinlab.org/)\
+[Tatiana Woller](https://github.com/tatianawoller) [(VIB)](https://bioimagingcore-leuven.sites.vib.be/en)\
+[Irene Lamberti](https://github.com/irelamb) [(VIB)](https://bioimagingcore-leuven.sites.vib.be/en)\
+[Benjamin Pavie](https://github.com/bpavie) [(VIB)](https://bioimagingcore-leuven.sites.vib.be/en)
 
 ## Contributions and Support
 
