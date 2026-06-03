@@ -25,7 +25,7 @@ workflow NUMORPH_STITCH {
     def mat_files = NUMORPHSTITCH.out.variables_stitched
         .flatMap { meta, variables_dir ->
             variables_dir.listFiles()
-                .findAll { it.name.endsWith('.mat') }
+                .findAll { file -> file.name.endsWith('.mat') }
                 .collect { matfile ->  [meta, matfile] }
         }
 

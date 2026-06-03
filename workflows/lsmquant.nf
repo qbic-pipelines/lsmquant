@@ -29,7 +29,7 @@ include { VALIDATE_PARAMETERS    } from '../modules/local/validate_parameters'
 workflow LSMQUANT {
 
     take:
-    ch_samplesheet // channel: samplesheet read in from --input
+    samplesheet // channel: samplesheet read in from --input
     multiqc_config
     multiqc_logo
     multiqc_methods_description
@@ -39,11 +39,10 @@ workflow LSMQUANT {
 
     def ch_versions = channel.empty()
     def ch_multiqc_files = channel.empty()
-    samplesheet // channel: samplesheet read in from --input
 
 
     // validate numorph specific parameters
-    ch_parameter_file = samplesheet.map { meta, img_dir, parameter_file -> [meta, parameter_file] }
+    ch_parameter_file = samplesheet.map { meta, _img_dir, parameter_file -> [meta, parameter_file] }
     schema_json = file("${projectDir}/assets/numorph_params_schema.json")
     VALIDATE_PARAMETERS(ch_parameter_file, schema_json)
 
@@ -59,7 +58,7 @@ workflow LSMQUANT {
 
     // if zip archive then unzip first
     samplesheet_split.zip_archive
-        .map { meta, zip, parameter_file ->
+        .map { meta, zip, _parameter_file ->
             tuple(meta, zip)
         }
         .set { zip_archive }
@@ -69,14 +68,14 @@ workflow LSMQUANT {
     // join unzipped output with  parameter file
     unzipped_output
         .join(samplesheet_split.zip_archive)
-        .map { meta, unzipped, zip, parameter_file ->
+        .map { meta, unzipped, _zip, parameter_file ->
             tuple(meta, unzipped, parameter_file)
         }
         .set { ch_unzipped }
 
     // if directory then stage files
     samplesheet_split.directory
-        .map { meta, img_directory, parameter_file ->
+        .map { meta, img_directory, _parameter_file ->
             tuple(meta, img_directory)
         }
         .set { img_dir }
@@ -86,13 +85,13 @@ workflow LSMQUANT {
 
     staged_images
         .join(samplesheet_split.directory)
-        .map { meta, staged, raw_img_directory, parameter_file ->
+        .map { meta, staged, _raw_img_directory, parameter_file ->
             tuple(meta, staged, parameter_file)
         }
         .set { ch_stagedfiles }
 
     // combine unzipped and staged files channels
-    ch_samplesheet = Channel.empty()
+    ch_samplesheet = channel.empty()
     ch_samplesheet = ch_unzipped.mix(ch_stagedfiles)
 
 
@@ -113,7 +112,7 @@ workflow LSMQUANT {
         def mat_files = NUMORPHSTITCH.out.variables_stitched
         .flatMap { meta, variables_dir ->
             variables_dir.listFiles()
-                .findAll { it.name.endsWith('.mat') }
+                .findAll { file -> file.name.endsWith('.mat') }
                 .collect { matfile ->  [meta, matfile] }
         }
 
@@ -139,7 +138,7 @@ workflow LSMQUANT {
 
     stitched_data = ch_samplesheet
             .join (stitched_output)
-            .map { meta, img_directory, parameter_file, stitched_data ->
+            .map { meta, _img_directory, parameter_file, stitched_data ->
                 [meta, stitched_data, parameter_file]
             }
 
