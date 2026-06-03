@@ -1,0 +1,3 @@
+Workflow:
+    nf-core/lsmquant: v1.0.0
+    Nextflow: 25.10.2

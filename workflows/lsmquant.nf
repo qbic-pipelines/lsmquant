@@ -16,6 +16,7 @@ include { UNZIP                  } from '../modules/nf-core/unzip'
 include { STAGEFILES             } from '../modules/local/stagefiles'
 include { MULTIQC                } from '../modules/nf-core/multiqc'
 include { NUMORPHSTITCH          } from '../modules/local/numorphstitch'
+include { CONVERSIONCZITIF       } from '../modules/local/conversionczitif'  
 
 /*
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
@@ -36,11 +37,14 @@ workflow LSMQUANT {
     ch_multiqc_files = Channel.empty()
 
     // branch input channel based on whether zip archive or directory
-    samplesheet.branch { meta, img_directory, parameter_file ->
+    samplesheet.branch { meta, img_directory, parameter_file , conversion_file->
         zip_archive: img_directory[0].endsWith(".zip")
             return tuple(meta, img_directory, parameter_file)
+        conversion:  conversion_file
+            return tuple(meta, conversion_file, parameter_file)
         directory: true
             return tuple(meta, img_directory, parameter_file)
+        
     }
     .set { samplesheet_split }
 
@@ -70,6 +74,23 @@ workflow LSMQUANT {
         }
         .set { img_dir }
 
+    // if conversion
+    samplesheet_split.conversion{
+        def ch_images = Channel.fromPath(params.input_conversion, checkIfExists: true)
+                                 .splitCsv(header:true)
+                                 .map { row ->
+                                        def meta = [:]
+                                        meta.id = row.sample
+                                        def image = file(row.image_path)
+                                        def tile_position =row.tile_position
+                                        def group = row.group
+                                        def markers = row.markers
+                                        def slicenumber = row.slicenumber
+                                        return [meta, image,tile_position,markers,group,slicenumber]
+                                    }
+                                    .set{image_ch}  
+        CONVERSIONCZITIF(ch_images).set{ img_dir}
+
     STAGEFILES (img_dir)
     ch_versions = ch_versions.mix(STAGEFILES.out.versions)
     staged_images = STAGEFILES.out.raw_files
@@ -96,6 +117,32 @@ workflow LSMQUANT {
         empty_align_table_mat = samplesheet.map {[]}
         empty_z_displacement_align_mat = samplesheet.map {[]}
 
+
+          NUMORPHSTITCH (
+            ch_samplesheet,
+            empty_align_table_mat,
+            empty_z_displacement_align_mat,
+            empty_path_table_mat,
+            empty_thresholds_mat,
+            empty_adj_params_mat,
+            empty_NM_variables
+        )
+      //  ch_versions = ch_versions.mix(NUMORPHSTITCH.out.versions)
+
+      //  def stitched_output = NUMORPHSTITCH.out.stitched
+
+    //    stitched_output
+    //        .join(samplesheet)
+    //        .map { meta, stitched, raw_img_directory, parameter_file ->
+    //            tuple(meta, stitched, parameter_file)
+    //        }
+     //       .set { stitched_data }
+
+
+        }
+
+
+        if  (params.conversion_czi_tif==false){
         NUMORPHSTITCH (
             ch_samplesheet,
             empty_align_table_mat,
@@ -115,7 +162,7 @@ workflow LSMQUANT {
                 tuple(meta, stitched, parameter_file)
             }
             .set { stitched_data }
-    }
+    }}
 
     // run single channel preprocessing by intensity and stitching
     if (params.stage == 'int_stitch') {

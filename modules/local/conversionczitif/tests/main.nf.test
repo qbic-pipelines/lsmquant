@@ -1,0 +1,77 @@
+nextflow_process {
+
+    name "Test Process CONVERSION_CZI_TIF"
+    script "../main.nf"
+    process "CONVERSION_CZI_TIF"
+
+    tag "modules"
+    tag "modules_local"
+    tag "conversion"
+
+    test("conversion") {
+         setup {
+            run ("UNZIP") {
+                script "../../../nf-core/unzip/main.nf"
+                process {
+                    """
+                    input[0] = Channel.fromList([
+                        tuple([ id:'TEST1'],
+                        file(params.pipelines_testdata_base_path + '/test_data/conversion.zip'))
+                    ])
+                """
+                }
+            }
+        }
+        when { 
+    
+            process {
+                config ".nextflow.config"
+                """
+                input[0] = [
+                             [id:'0'],
+                    file('P7_u3_187670_zstack_min_subset.czi'),
+                    "3X3",
+                    "C1 C0", 
+                    "Test",
+                    1]
+                """
+            }
+        }
+
+
+        then {
+            assertAll(
+                { assert process.success },
+                {assert snapshot(process.out.conversion).match("conversion")}
+            )
+        }
+    }
+
+
+    test("stub") {
+
+        options "-stub"
+
+        when {
+            process {
+                config ".nextflow.config"
+                """
+                input[0] = [
+                             [id:'0'],
+                    file('P7_u3_187670_zstack_min_subset.czi'),
+                    "3X3",
+                    "C1 C0", 
+                    "Test",
+                    1]
+                """
+            }
+        }
+
+        then {
+            assertAll(
+                { assert process.success },
+                { assert snapshot(process.out).match()}
+            )
+        }
+    }
+}

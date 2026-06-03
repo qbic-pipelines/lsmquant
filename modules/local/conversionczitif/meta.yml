@@ -1,0 +1,55 @@
+---
+name: "conversion_czi_tif"
+description: converst zeiss .czi files into tif files.
+keywords:
+  - file conversion
+  - python
+  - czi
+  - tif
+tools:
+  - "conversionczitif":
+      description: "Converts zeiss  files into tif single channel with file_name that is appropriate to serve as input to lsmquant"
+      homepage: ""
+      documentation: ""
+      tool_dev_url: ""
+      doi: ""
+      licence:
+      identifier:
+
+input:
+  # Only when we have meta
+  - - meta:
+        type: map
+        description: |
+          Groovy Map containing sample information
+          e.g. `[ id:'sample1']`
+
+    - czi_file:
+        type: file
+        description: zeiss file
+        pattern: "*.{czi}"
+
+output:
+  - converted_file:
+      #Only when we have meta
+      - meta:
+          type: map
+          description: |
+            Groovy Map containing sample information
+            e.g. `[ id:'sample1', single_end:false ]`
+
+      - "*.tif":
+          type: file
+          description: TIF file containing the the data from the input .czi file and with the filename appropriate to serve as input for lsmquant
+          pattern: "*.{tif}"
+
+  - versions:
+      - "versions.yml":
+          type: file
+          description: File containing software versions
+          pattern: "versions.yml"
+
+authors:
+  - "@tatianawoller"
+maintainers:
+  - "@tatianawoller"

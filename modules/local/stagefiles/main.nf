@@ -10,7 +10,7 @@ process STAGEFILES {
     tuple val(meta), path(file_directory) // directory containing files
 
     output:
-    tuple val(meta), path("${meta.id}_raw/*")  , emit: raw_files
+    tuple val(meta), path("${prefix}_raw/*")  , emit: raw_files
     path "versions.yml"                        , emit: versions
 
     when:
@@ -18,7 +18,7 @@ process STAGEFILES {
 
     script:
     def args = task.ext.args ?: ''
-    def prefix = task.ext.prefix ?: "${meta.id}"
+    prefix = task.ext.prefix ?: "${meta.id}"
 
     """
     # This is a stageing module
@@ -39,7 +39,7 @@ process STAGEFILES {
 
     stub:
     def args = task.ext.args ?: ''
-    def prefix = task.ext.prefix ?: "${meta.id}"
+    prefix = task.ext.prefix ?: "${meta.id}"
 
     """
 
