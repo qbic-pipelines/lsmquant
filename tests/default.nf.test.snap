@@ -18,9 +18,6 @@
                 "NUMORPH_INTENSITY": {
                     "numorph_intensity": "1.0.0"
                 },
-                "UNZIP": {
-                    "7za": 16.02
-                },
                 "VALIDATE_PARAMETERS": {
                     "numorph_param_validation": "1.0.0"
                 },
@@ -35,7 +32,9 @@
                 "mat2json/preprocessing/TEST1/TEST1.json",
                 "multiqc",
                 "multiqc/multiqc_data",
+                "multiqc/multiqc_data/.stub",
                 "multiqc/multiqc_plots",
+                "multiqc/multiqc_plots/.stub",
                 "multiqc/multiqc_report.html",
                 "numorph3dunet",
                 "numorph3dunet/TEST1",
@@ -75,14 +74,16 @@
             ],
             [
                 "TEST1.json:md5,d41d8cd98f00b204e9800998ecf8427e",
+                ".stub:md5,d41d8cd98f00b204e9800998ecf8427e",
+                ".stub:md5,d41d8cd98f00b204e9800998ecf8427e",
                 "TEST1_full.tif:md5,d41d8cd98f00b204e9800998ecf8427e",
                 "params_TEST1_lsmquant.csv:md5,a1edc3a22e8f390e473102d0193a8f1c"
             ]
         ],
-        "timestamp": "2026-04-29T15:18:49.500188714",
+        "timestamp": "2026-06-03T17:44:14.056450705",
         "meta": {
             "nf-test": "0.9.4",
-            "nextflow": "25.10.3"
+            "nextflow": "25.10.4"
         }
     },
     "default test gpu": {
@@ -103,9 +104,6 @@
                 },
                 "NUMORPH_INTENSITY": {
                     "numorph_intensity": "1.0.0"
-                },
-                "UNZIP": {
-                    "7za": 16.02
                 },
                 "VALIDATE_PARAMETERS": {
                     "numorph_param_validation": "1.0.0"
@@ -579,10 +577,10 @@
                 "params_TEST1_lsmquant.csv:md5,a1edc3a22e8f390e473102d0193a8f1c"
             ]
         ],
-        "timestamp": "2026-04-29T15:16:32.417361365",
+        "timestamp": "2026-06-03T17:16:05.583772288",
         "meta": {
             "nf-test": "0.9.4",
-            "nextflow": "25.10.3"
+            "nextflow": "25.10.4"
         }
     }
 }

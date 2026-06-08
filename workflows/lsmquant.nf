@@ -30,15 +30,19 @@ workflow LSMQUANT {
 
     take:
     samplesheet // channel: samplesheet read in from --input
+    multiqc_config
+    multiqc_logo
+    multiqc_methods_description
+    outdir
 
     main:
 
-    ch_multiqc_files = Channel.empty()
-    ch_versions = Channel.empty()
+    def ch_versions = channel.empty()
+    def ch_multiqc_files = channel.empty()
 
 
     // validate numorph specific parameters
-    ch_parameter_file = samplesheet.map { meta, img_dir, parameter_file -> [meta, parameter_file] }
+    ch_parameter_file = samplesheet.map { meta, _img_dir, parameter_file -> [meta, parameter_file] }
     schema_json = file("${projectDir}/assets/numorph_params_schema.json")
     VALIDATE_PARAMETERS(ch_parameter_file, schema_json)
 
@@ -54,7 +58,7 @@ workflow LSMQUANT {
 
     // if zip archive then unzip first
     samplesheet_split.zip_archive
-        .map { meta, zip, parameter_file ->
+        .map { meta, zip, _parameter_file ->
             tuple(meta, zip)
         }
         .set { zip_archive }
@@ -64,14 +68,14 @@ workflow LSMQUANT {
     // join unzipped output with  parameter file
     unzipped_output
         .join(samplesheet_split.zip_archive)
-        .map { meta, unzipped, zip, parameter_file ->
+        .map { meta, unzipped, _zip, parameter_file ->
             tuple(meta, unzipped, parameter_file)
         }
         .set { ch_unzipped }
 
     // if directory then stage files
     samplesheet_split.directory
-        .map { meta, img_directory, parameter_file ->
+        .map { meta, img_directory, _parameter_file ->
             tuple(meta, img_directory)
         }
         .set { img_dir }
@@ -81,13 +85,13 @@ workflow LSMQUANT {
 
     staged_images
         .join(samplesheet_split.directory)
-        .map { meta, staged, raw_img_directory, parameter_file ->
+        .map { meta, staged, _raw_img_directory, parameter_file ->
             tuple(meta, staged, parameter_file)
         }
         .set { ch_stagedfiles }
 
     // combine unzipped and staged files channels
-    ch_samplesheet = Channel.empty()
+    ch_samplesheet = channel.empty()
     ch_samplesheet = ch_unzipped.mix(ch_stagedfiles)
 
 
@@ -108,7 +112,7 @@ workflow LSMQUANT {
         def mat_files = NUMORPHSTITCH.out.variables_stitched
         .flatMap { meta, variables_dir ->
             variables_dir.listFiles()
-                .findAll { it.name.endsWith('.mat') }
+                .findAll { file -> file.name.endsWith('.mat') }
                 .collect { matfile ->  [meta, matfile] }
         }
 
@@ -134,7 +138,7 @@ workflow LSMQUANT {
 
     stitched_data = ch_samplesheet
             .join (stitched_output)
-            .map { meta, img_directory, parameter_file, stitched_data ->
+            .map { meta, _img_directory, parameter_file, stitched_data ->
                 [meta, stitched_data, parameter_file]
             }
 
@@ -155,7 +159,7 @@ workflow LSMQUANT {
 
     // Collate and save software versions
     //
-    def topic_versions = Channel.topic("versions")
+    def topic_versions = channel.topic("versions")
         .distinct()
         .branch { entry ->
             versions_file: entry instanceof Path
@@ -172,58 +176,43 @@ workflow LSMQUANT {
             "${process}:\n${tool_versions.join('\n')}"
         }
 
-
-    ch_versions = ch_versions.mix(UNZIP.out.versions)
-    softwareVersionsToYAML(ch_versions.mix(topic_versions.versions_file))
+    def ch_collated_versions = softwareVersionsToYAML(ch_versions.mix(topic_versions.versions_file))
         .mix(topic_versions_string)
         .collectFile(
-            storeDir: "${params.outdir}/pipeline_info",
+            storeDir: "${outdir}/pipeline_info",
             name: 'nf_core_'  +  'lsmquant_software_'  + 'mqc_'  + 'versions.yml',
             sort: true,
             newLine: true
-        ).set { ch_collated_versions }
-
+        )
 
      //
     // MODULE: MultiQC
     //
-    ch_multiqc_config        = channel.fromPath("$projectDir/assets/multiqc_config.yml", checkIfExists: true)
-    ch_multiqc_custom_config = params.multiqc_config ? channel.fromPath(params.multiqc_config, checkIfExists: true) : channel.empty()
-    ch_multiqc_logo          = params.multiqc_logo ? channel.fromPath(params.multiqc_logo, checkIfExists: true) : channel.empty()
-
-    summary_params      = paramsSummaryMap(workflow, parameters_schema: "nextflow_schema.json")
-    ch_workflow_summary = channel.value(paramsSummaryMultiqc(summary_params))
-
-    ch_multiqc_files = ch_multiqc_files.mix(ch_workflow_summary.collectFile(name: 'workflow_summary_mqc.yaml'))
-
-    ch_multiqc_custom_methods_description = params.multiqc_methods_description
-            ? file(params.multiqc_methods_description, checkIfExists: true)
-            : file("$projectDir/assets/methods_description_template.yml", checkIfExists: true)
-
-    ch_methods_description = channel.value(methodsDescriptionText(ch_multiqc_custom_methods_description))
-
     ch_multiqc_files = ch_multiqc_files.mix(ch_collated_versions)
-    ch_multiqc_files = ch_multiqc_files.mix(
-        ch_methods_description.collectFile(
-            name: 'methods_description_mqc.yaml',
-            sort: true
-        )
+    def ch_summary_params = paramsSummaryMap(workflow, parameters_schema: "nextflow_schema.json")
+    def ch_workflow_summary = channel.value(paramsSummaryMultiqc(ch_summary_params))
+    ch_multiqc_files = ch_multiqc_files.mix(ch_workflow_summary.collectFile(name: 'workflow_summary_mqc.yaml'))
+    def ch_multiqc_custom_methods_description = multiqc_methods_description
+        ? file(multiqc_methods_description, checkIfExists: true)
+        : file("${projectDir}/assets/methods_description_template.yml", checkIfExists: true)
+    def ch_methods_description = channel.value(methodsDescriptionText(ch_multiqc_custom_methods_description))
+    ch_multiqc_files = ch_multiqc_files.mix(ch_methods_description.collectFile(name: 'methods_description_mqc.yaml', sort: true))
+    MULTIQC(
+        ch_multiqc_files.flatten().collect().map { files ->
+            [
+                [id: 'lsmquant'],
+                files,
+                multiqc_config
+                    ? file(multiqc_config, checkIfExists: true)
+                    : file("${projectDir}/assets/multiqc_config.yml", checkIfExists: true),
+                multiqc_logo ? file(multiqc_logo, checkIfExists: true) : [],
+                [],
+                [],
+            ]
+        }
     )
-
-    MULTIQC (
-        ch_multiqc_files.collect(),
-        ch_multiqc_config.toList(),
-        ch_multiqc_custom_config.toList(),
-        ch_multiqc_logo.toList(),
-        [],
-        []
-    )
-    multiqc_report = MULTIQC.out.report.toList()
-
-    emit:
-    multiqc_report          // channel: final MultiQC report
-    ch_collated_versions    // channel: collated software versions in YAML file
-
+    emit:multiqc_report = MULTIQC.out.report.map { _meta, report -> [report] }.toList() // channel: /path/to/multiqc_report.html
+    versions       = ch_versions                 // channel: [ path(versions.yml) ]
 }
 
 

@@ -11,14 +11,11 @@ workflow ARAREGISTRATION {
     stitched_data // channel: [ val(meta), path(images), path(parameters.csv)  ]
     main:
 
-    ch_versions = Channel.empty()
-    sample_meta = stitched_data.map { meta, img_dir, params -> meta }
-
     NUMORPH_RESAMPLE (stitched_data)
 
     def resampled_data = stitched_data
         .join(NUMORPH_RESAMPLE.out.resampled)
-        .map { meta, stitched_img_directory, parameter_file, resampled ->
+        .map { meta, _stitched_img_directory, parameter_file, resampled ->
             [meta, resampled, parameter_file]
         }
 
@@ -28,7 +25,7 @@ workflow ARAREGISTRATION {
     def mat_files = NUMORPHREGISTER.out.variables
         .flatMap { meta, variables_dir ->
             variables_dir.listFiles()
-                .findAll { it.name.endsWith('.mat') }
+                .findAll { file -> file.name.endsWith('.mat') }
                 .collect { matfile ->  [meta, matfile] }
         }
         .mix(NUMORPHREGISTER.out.NM_variables)
