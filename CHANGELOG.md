@@ -3,6 +3,14 @@
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/)
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## 1.0.2 - Excited Squid Patch
+
+### `Added`
+
+- [PR#62](https://github.com/nf-core/lsmquant/pull/62) - Template update
+- zenodo DOI to cite all versions
+- new metromap (smaller nf-core logo, fix typo)
+
 ## 1.0.1 - Excited Squid Patch
 
 ### `Fixed`
