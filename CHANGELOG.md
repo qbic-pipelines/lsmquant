@@ -10,6 +10,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - [PR#62](https://github.com/nf-core/lsmquant/pull/62) - Template update
 - zenodo DOI to cite all versions
 - new metromap (smaller nf-core logo, fix typo)
+- [PR#69](https://github.com/nf-core/lsmquant/pull/69) - Fix to prevent stitching from starting twice when “NM_variables” is specified
 
 ## 1.0.1 - Excited Squid Patch
 
