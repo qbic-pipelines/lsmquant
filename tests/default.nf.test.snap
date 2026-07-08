@@ -6,14 +6,14 @@
                 "MAT2JSON": {
                     "mat2json": "1.0.0"
                 },
-                "NUMORPH3DUNET": {
-                    "numorph-3dunet": "1.0.0"
-                },
                 "NUMORPHALIGN": {
                     "numorph_align": "1.0.0"
                 },
                 "NUMORPHSTITCH": {
                     "numorph_stitch": "1.0.0"
+                },
+                "NUMORPH_3DUNET": {
+                    "numorph_3dunet": "1.0.9"
                 },
                 "NUMORPH_INTENSITY": {
                     "numorph_intensity": "1.0.0"
@@ -36,10 +36,10 @@
                 "multiqc/multiqc_plots",
                 "multiqc/multiqc_plots/.stub",
                 "multiqc/multiqc_report.html",
-                "numorph3dunet",
-                "numorph3dunet/TEST1",
-                "numorph3dunet/TEST1/TEST1.csv",
-                "numorph3dunet/TEST1/TEST1_counts.csv",
+                "numorph_3dunet",
+                "numorph_3dunet/TEST1",
+                "numorph_3dunet/TEST1/TEST1.csv",
+                "numorph_3dunet/TEST1/TEST1_counts.csv",
                 "numorph_intensity",
                 "numorph_intensity/TEST1",
                 "numorph_intensity/TEST1/NM_variables.mat",
@@ -80,7 +80,7 @@
                 "params_TEST1_lsmquant.csv:md5,a1edc3a22e8f390e473102d0193a8f1c"
             ]
         ],
-        "timestamp": "2026-06-03T17:44:14.056450705",
+        "timestamp": "2026-07-08T15:21:53.788887761",
         "meta": {
             "nf-test": "0.9.4",
             "nextflow": "25.10.4"
@@ -93,14 +93,14 @@
                 "MAT2JSON": {
                     "mat2json": "1.0.0"
                 },
-                "NUMORPH3DUNET": {
-                    "numorph-3dunet": "1.0.0"
-                },
                 "NUMORPHALIGN": {
                     "numorph_align": "1.0.0"
                 },
                 "NUMORPHSTITCH": {
                     "numorph_stitch": "1.0.0"
+                },
+                "NUMORPH_3DUNET": {
+                    "numorph_3dunet": "1.0.9"
                 },
                 "NUMORPH_INTENSITY": {
                     "numorph_intensity": "1.0.0"
@@ -134,10 +134,10 @@
                 "multiqc/multiqc_data/multiqc_software_versions.txt",
                 "multiqc/multiqc_data/multiqc_sources.txt",
                 "multiqc/multiqc_report.html",
-                "numorph3dunet",
-                "numorph3dunet/TEST1",
-                "numorph3dunet/TEST1/TEST1.csv",
-                "numorph3dunet/TEST1/TEST1_counts.csv",
+                "numorph_3dunet",
+                "numorph_3dunet/TEST1",
+                "numorph_3dunet/TEST1/TEST1.csv",
+                "numorph_3dunet/TEST1/TEST1_counts.csv",
                 "numorph_intensity",
                 "numorph_intensity/TEST1",
                 "numorph_intensity/TEST1/NM_variables.mat",
@@ -577,7 +577,7 @@
                 "params_TEST1_lsmquant.csv:md5,a1edc3a22e8f390e473102d0193a8f1c"
             ]
         ],
-        "timestamp": "2026-06-03T17:16:05.583772288",
+        "timestamp": "2026-07-08T15:20:03.68999165",
         "meta": {
             "nf-test": "0.9.4",
             "nextflow": "25.10.4"
