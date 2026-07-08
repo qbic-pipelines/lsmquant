@@ -36,10 +36,10 @@
                 "multiqc/multiqc_plots",
                 "multiqc/multiqc_plots/.stub",
                 "multiqc/multiqc_report.html",
-                "numorph",
-                "numorph/TEST1",
-                "numorph/TEST1/TEST1.csv",
-                "numorph/TEST1/TEST1_counts.csv",
+                "numorph_3dunet",
+                "numorph_3dunet/TEST1",
+                "numorph_3dunet/TEST1/TEST1.csv",
+                "numorph_3dunet/TEST1/TEST1_counts.csv",
                 "numorph_intensity",
                 "numorph_intensity/TEST1",
                 "numorph_intensity/TEST1/NM_variables.mat",
@@ -82,7 +82,7 @@
                 "params_TEST1_lsmquant.csv:md5,a1edc3a22e8f390e473102d0193a8f1c"
             ]
         ],
-        "timestamp": "2026-07-08T11:02:03.545979522",
+        "timestamp": "2026-07-08T12:54:09.499993498",
         "meta": {
             "nf-test": "0.9.4",
             "nextflow": "25.10.4"
@@ -136,10 +136,10 @@
                 "multiqc/multiqc_data/multiqc_software_versions.txt",
                 "multiqc/multiqc_data/multiqc_sources.txt",
                 "multiqc/multiqc_report.html",
-                "numorph",
-                "numorph/TEST1",
-                "numorph/TEST1/TEST1.csv",
-                "numorph/TEST1/TEST1_counts.csv",
+                "numorph_3dunet",
+                "numorph_3dunet/TEST1",
+                "numorph_3dunet/TEST1/TEST1.csv",
+                "numorph_3dunet/TEST1/TEST1_counts.csv",
                 "numorph_intensity",
                 "numorph_intensity/TEST1",
                 "numorph_intensity/TEST1/NM_variables.mat",
@@ -581,7 +581,7 @@
                 "params_TEST1_lsmquant.csv:md5,a1edc3a22e8f390e473102d0193a8f1c"
             ]
         ],
-        "timestamp": "2026-07-08T10:59:08.337984395",
+        "timestamp": "2026-07-08T12:52:41.833276193",
         "meta": {
             "nf-test": "0.9.4",
             "nextflow": "25.10.4"
