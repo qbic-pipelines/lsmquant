@@ -11,7 +11,7 @@ include { paramsSummaryMultiqc   } from '../subworkflows/nf-core/utils_nfcore_pi
 include { softwareVersionsToYAML } from '../subworkflows/nf-core/utils_nfcore_pipeline'
 include { methodsDescriptionText } from '../subworkflows/local/utils_nfcore_lsmquant_pipeline'
 include { MAT2JSON               } from '../modules/local/mat2json'
-include { NUMORPH3DUNET          } from '../modules/local/numorph3dunet'
+include { NUMORPH_3DUNET          } from '../modules/nf-core/numorph/3dunet'
 include { UNZIP                  } from '../modules/nf-core/unzip'
 include { STAGEFILES             } from '../modules/local/stagefiles'
 include { MULTIQC                } from '../modules/nf-core/multiqc'
@@ -146,7 +146,7 @@ workflow LSMQUANT {
     if (params.nuclei_quantification) {
 
         model_file = file(params.model_file, checkIfExists: !params.model_file.startsWith('http'))
-        NUMORPH3DUNET (stitched_data, model_file)
+        NUMORPH_3DUNET (stitched_data, model_file)
 
     }
     // run ara registration

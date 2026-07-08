@@ -15,6 +15,11 @@
                         "git_sha": "008f9d3e61209bf995edac3ba531f54e269e1215",
                         "installed_by": ["modules"]
                     },
+                    "numorph/3dunet": {
+                        "branch": "master",
+                        "git_sha": "9707facbacc9c5c02ecf0b192f0604a29351b00a",
+                        "installed_by": ["modules"]
+                    },
                     "numorph/intensity": {
                         "branch": "master",
                         "git_sha": "163b8a7181a343e98a292c626889a81d2da90298",

@@ -6,14 +6,14 @@
                 "MAT2JSON": {
                     "mat2json": "1.0.0"
                 },
-                "NUMORPH3DUNET": {
-                    "numorph-3dunet": "1.0.0"
-                },
                 "NUMORPHALIGN": {
                     "numorph_align": "1.0.0"
                 },
                 "NUMORPHSTITCH": {
                     "numorph_stitch": "1.0.0"
+                },
+                "NUMORPH_3DUNET": {
+                    "numorph_3dunet": "1.0.9"
                 },
                 "NUMORPH_INTENSITY": {
                     "numorph_intensity": "1.0.0"
@@ -36,10 +36,10 @@
                 "multiqc/multiqc_plots",
                 "multiqc/multiqc_plots/.stub",
                 "multiqc/multiqc_report.html",
-                "numorph3dunet",
-                "numorph3dunet/TEST1",
-                "numorph3dunet/TEST1/TEST1.csv",
-                "numorph3dunet/TEST1/TEST1_counts.csv",
+                "numorph",
+                "numorph/TEST1",
+                "numorph/TEST1/TEST1.csv",
+                "numorph/TEST1/TEST1_counts.csv",
                 "numorph_intensity",
                 "numorph_intensity/TEST1",
                 "numorph_intensity/TEST1/NM_variables.mat",
@@ -76,11 +76,13 @@
                 "TEST1.json:md5,d41d8cd98f00b204e9800998ecf8427e",
                 ".stub:md5,d41d8cd98f00b204e9800998ecf8427e",
                 ".stub:md5,d41d8cd98f00b204e9800998ecf8427e",
+                "TEST1.csv:md5,d41d8cd98f00b204e9800998ecf8427e",
+                "TEST1_counts.csv:md5,d41d8cd98f00b204e9800998ecf8427e",
                 "TEST1_full.tif:md5,d41d8cd98f00b204e9800998ecf8427e",
                 "params_TEST1_lsmquant.csv:md5,a1edc3a22e8f390e473102d0193a8f1c"
             ]
         ],
-        "timestamp": "2026-06-03T17:44:14.056450705",
+        "timestamp": "2026-07-08T11:02:03.545979522",
         "meta": {
             "nf-test": "0.9.4",
             "nextflow": "25.10.4"
@@ -93,14 +95,14 @@
                 "MAT2JSON": {
                     "mat2json": "1.0.0"
                 },
-                "NUMORPH3DUNET": {
-                    "numorph-3dunet": "1.0.0"
-                },
                 "NUMORPHALIGN": {
                     "numorph_align": "1.0.0"
                 },
                 "NUMORPHSTITCH": {
                     "numorph_stitch": "1.0.0"
+                },
+                "NUMORPH_3DUNET": {
+                    "numorph_3dunet": "1.0.9"
                 },
                 "NUMORPH_INTENSITY": {
                     "numorph_intensity": "1.0.0"
@@ -134,10 +136,10 @@
                 "multiqc/multiqc_data/multiqc_software_versions.txt",
                 "multiqc/multiqc_data/multiqc_sources.txt",
                 "multiqc/multiqc_report.html",
-                "numorph3dunet",
-                "numorph3dunet/TEST1",
-                "numorph3dunet/TEST1/TEST1.csv",
-                "numorph3dunet/TEST1/TEST1_counts.csv",
+                "numorph",
+                "numorph/TEST1",
+                "numorph/TEST1/TEST1.csv",
+                "numorph/TEST1/TEST1_counts.csv",
                 "numorph_intensity",
                 "numorph_intensity/TEST1",
                 "numorph_intensity/TEST1/NM_variables.mat",
@@ -396,6 +398,8 @@
                 "z_disp_matrix.json:md5,575020a27eee808b03c615e0a80ca506",
                 "z_displacement_align.json:md5,0eb5dab0b44ab3c5ceaa8b053ec250e0",
                 "multiqc_citations.txt:md5,4c806e63a283ec1b7e78cdae3a923d4f",
+                "TEST1.csv:md5,f7e3882ceef3943870f0210a5927afa1",
+                "TEST1_counts.csv:md5,2c1e51f26053bdf9303e94846b64410c",
                 "ctip2_1_1_11.tif:md5,d4220099450790596d1e585f5721eabd",
                 "ctip2_1_2_11.tif:md5,e817a5ad26397be4c43f98f9697d19b5",
                 "ctip2_2_1_11.tif:md5,1473780c1a0e04276f09b6624fba583c",
@@ -577,7 +581,7 @@
                 "params_TEST1_lsmquant.csv:md5,a1edc3a22e8f390e473102d0193a8f1c"
             ]
         ],
-        "timestamp": "2026-06-03T17:16:05.583772288",
+        "timestamp": "2026-07-08T10:59:08.337984395",
         "meta": {
             "nf-test": "0.9.4",
             "nextflow": "25.10.4"
