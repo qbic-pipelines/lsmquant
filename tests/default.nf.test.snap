@@ -22,7 +22,7 @@
                     "numorph_param_validation": "1.0.0"
                 },
                 "Workflow": {
-                    "nf-core/lsmquant": "v1.0.2"
+                    "nf-core/lsmquant": "v1.0.3"
                 }
             },
             [
@@ -109,7 +109,7 @@
                     "numorph_param_validation": "1.0.0"
                 },
                 "Workflow": {
-                    "nf-core/lsmquant": "v1.0.2"
+                    "nf-core/lsmquant": "v1.0.3"
                 }
             },
             [
