@@ -1,17 +1,17 @@
-process NUMORPH3DUNET {
+process NUMORPH_3DUNET {
     tag "$meta.id"
     label 'process_gpu'
 
-    container "nf-core/numorph-3dunet:1.0.0"
+    container "quay.io/nf-core/numorph-3dunet:1.0.9"
 
     input:
     tuple val(meta), path(img_directory), path(parameter_file)
     path(model_file)
 
     output:
-    tuple val(meta), path ("${prefix}/")              , emit: cellcounts
+    tuple val(meta), path("${prefix}/")              , emit: cellcounts
 
-    tuple val("${task.process}"), val('numorph-3dunet'), val('1.0.0'), emit: versions_numorph_3dunet, topic: versions
+    tuple val("${task.process}"), val('numorph_3dunet'), eval('numorph_3dunet --version'), emit: versions_numorph_3dunet, topic: versions
 
     when:
     task.ext.when == null || task.ext.when
@@ -21,18 +21,14 @@ process NUMORPH3DUNET {
     prefix = task.ext.prefix ?: "${meta.id}"
 
     """
-    source /opt/conda/etc/profile.d/conda.sh
-    conda activate 3dunet
-
     echo "Checking GPU access:"
     nvidia-smi
-
     mkdir -p ${prefix}
     img_dir=\$(readlink -f ${img_directory})
 
 
 
-    numorph_3dunet.predict \\
+    numorph_3dunet \\
         -i \$img_dir \\
         -o ${prefix} \\
         --model_file ${model_file} \\
