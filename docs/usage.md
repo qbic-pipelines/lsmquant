@@ -26,7 +26,7 @@ The only processes that requires access to a GPU is nuclei-quantification. To te
    --outdir <OUTDIR> \
 ```
 
-This will execute all preprocessing stages (intensity adjustment, channel alignment, and stitching) and nuclei-quantification using a 3D-UNet. To enable GPU access, run the pipeline with the profile `gpu`. See the section on [profiles](###`-profile`) for mor information.
+This will execute all preprocessing stages (intensity adjustment, channel alignment, and stitching) and nuclei-quantification using a 3D-UNet. To enable GPU access, run the pipeline with the profile `gpu`. For more information, see the section `-profile` at Core Nextflow arguments on this page.
 
 ## Samplesheet input
 
