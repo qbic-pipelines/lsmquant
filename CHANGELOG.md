@@ -5,7 +5,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## 1.x.x -
 
-### `Fixed``
+### `Fixed`
 
 - [Issue#71](https://github.com/nf-core/lsmquant/issues/71):
   - adding test_gpu profile to run test with GPU
