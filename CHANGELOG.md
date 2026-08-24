@@ -3,6 +3,15 @@
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/)
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## 1.x.x -
+
+### `Fixed``
+
+- [Issue#71](https://github.com/nf-core/lsmquant/issues/71):
+  - adding test_gpu profile to run test with GPU
+  - update test profile to run without gpu
+  - update documentation (README + usage) for both profiles
+
 ## 1.0.3 - Excited Squid Patch
 
 ### `Added`
