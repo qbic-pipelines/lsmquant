@@ -6,6 +6,28 @@
 
 ## Introduction
 
+> [!NOTE]
+> If you are new to Nextflow and nf-core, please refer to [this page](https://nf-co.re/docs/get_started/environment_setup/overview) on how to set-up Nextflow. Make sure to [test your setup](https://nf-co.re/docs/get_started/run-your-first-pipeline) with `-profile test` before running the workflow on actual data.
+
+You can test nf-core/lsmquant with :
+
+```bash
+nextflow run nf-core/lsmquant \
+  -profile test,<docker/singularity/.../institute> \
+  --outdir <OUTDIR> \
+```
+
+This will run the three preprocessing steps: intensity adjustment, channel alignment, and stitching. All these processes run on CPU.
+The only processes that requires access to a GPU is nuclei-quantification. To test the pipeline with GPU you can do so by running :
+
+```bash
+ nextflow run nf-core/lsmquant \
+   -profile test_gpu,gpu,<docker/singularity/.../institute> \
+   --outdir <OUTDIR> \
+```
+
+This will execute all preprocessing stages (intensity adjustment, channel alignment, and stitching) and nuclei-quantification using a 3D-UNet. To enable GPU access, run the pipeline with the profile `gpu`. See the section on [profiles](###`-profile`) for mor information.
+
 ## Samplesheet input
 
 You will need to create a samplesheet with information about the samples you would like to analyze before running the pipeline. Use this parameter to specify its location. It has to be a comma-separated file with 3 columns, and a header row as shown in the examples below.
@@ -341,6 +363,14 @@ If `-profile` is not specified, the pipeline will run locally and expect all sof
 - `test`
   - A profile with a complete configuration for automated testing
   - Includes links to test data so needs no other parameters
+  - Runs the following preprocessing steps: intensity adjustment, channel alignment, stitching
+- `test_gpu`
+  - A profile with a complete configuration for automated testing
+  - Includes links to test data so needs no other parameters
+  - Runs all preprocessing steps (intensity adjustment, channel alignment, stitching) and cell-nuclei quantification
+  - Requires the profile `gpu`
+- `gpu`
+  - A generic configuration profile to enable gpu usage
 - `docker`
   - A generic configuration profile to be used with [Docker](https://docker.com/)
 - `singularity`

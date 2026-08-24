@@ -51,6 +51,22 @@ This workflow registers full brain images to the Allen Brain Reference Atlas. Th
 
 > [!NOTE]
 > If you are new to Nextflow and nf-core, please refer to [this page](https://nf-co.re/docs/get_started/environment_setup/overview) on how to set-up Nextflow. Make sure to [test your setup](https://nf-co.re/docs/get_started/run-your-first-pipeline) with `-profile test` before running the workflow on actual data.
+>
+> You can test nf-core/lsmquant with :
+>
+> ```bash
+> nextflow run nf-core/lsmquant \
+>   -profile test,<docker/singularity/.../institute> \
+>   --outdir <OUTDIR> \
+> ```
+>
+> Or to test with GPU:
+>
+> ```bash
+> nextflow run nf-core/lsmquant \
+>   -profile test_gpu,gpu,<docker/singularity/.../institute> \
+>   --outdir <OUTDIR> \
+> ```
 
 To run the pipeline you need to provide a samplesheet with your data in the following structure:
 
