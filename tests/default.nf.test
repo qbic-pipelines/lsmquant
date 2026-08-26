@@ -4,7 +4,7 @@ nextflow_pipeline {
     script "../main.nf"
     tag "pipeline"
     tag "gpu"
-    profile "test"
+    profile "test_gpu"
 
 
     test("default test gpu") {
